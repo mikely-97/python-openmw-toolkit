@@ -879,6 +879,19 @@ These will crash OpenMW at load with a fatal ESM error; not just warnings:
   mesh) plus an **NPC** with `mesh="basicplayer.dae"` placed just in front of it.
   The player clicks the NPC to open barter/dialogue.
 
+- **`INFO/DATA` must be exactly 12 bytes** — `struct.pack("<iibbbb", type, disposition, npc_rank, gender, pc_rank, 0)`.
+  That is: type(i=4) + disposition(i=4) + npc_rank(b=1) + gender(b=1) + pc_rank(b=1) + pad(b=1) = 12.
+  Using `<BBBI` (1+1+1+4 = 7 bytes) crashes with:
+  `ESM Error: record size mismatch, requested 12, got 7 — Record: INFO Subrecord: DATA`
+  Use -1 for npc_rank/gender/pc_rank to mean "any". The `type` field must match the parent `DIAL` topic_type.
+
+- **`CELL/AMBI` color bytes must be packed as `[R, G, B, A]`** (R at lowest address).
+  TES3 reads each ambient/sunlight/fog color uint32 as R=(bits 0-7), G=(bits 8-15), B=(bits 16-23).
+  Storing `struct.pack("<I", 0x888888FF)` puts A=0xFF at byte 0 → OpenMW reads R=0xFF=255 (max red!).
+  Correct: `struct.pack("<BBBB", r, g, b, a)` where the input convention is 0xRRGGBBAA.
+  Example: gray `0x888888FF` → bytes `[0x88, 0x88, 0x88, 0xFF]` → OpenMW sees R=G=B=136 (gray).
+  Also: fog_density must be stored as `struct.pack("<f", density)` (float32), not as an integer.
+
 - **Dialogue text strings must be latin-1 encodable** (no Unicode beyond 0xFF).
   Em dashes (U+2014, `—`), curly quotes, and other non-ASCII Unicode characters
   will raise `UnicodeEncodeError` at build time.  Use ASCII approximations:

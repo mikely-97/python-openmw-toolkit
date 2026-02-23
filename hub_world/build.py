@@ -253,7 +253,7 @@ addon.add_npc(
     race="DefaultRace",
     npc_class="DefaultClass",
     faction="",
-    mesh="basicplayer.dae",   # game-template skeleton mesh; NPC must have this to be clickable
+    mesh="",          # no mesh: NPC is invisible but has actor-capsule collision → clickable
     disposition=70,
     level=10,
     gold=2000,
@@ -467,7 +467,9 @@ for lx, ly in [(-780, 780), (780, 780), (780, -780), (-780, -780)]:
 # clickable.  NPCs in the game template require basicplayer.dae for the
 # skeleton — custom meshes without skeleton bindings render as collapsed blobs.
 hub.place_static("hw_vending_machine", x=0, y=80, z=0)
-hub.place_npc("hw_vendor", x=0, y=30, z=0, rotation=3.14159)  # face south, toward player spawn
+# NPC is invisible (no mesh) but actor-capsule collision makes it clickable.
+# Placed at the same position as the STAT so cursor over the machine hits the NPC.
+hub.place_npc("hw_vendor", x=0, y=80, z=0, rotation=3.14159)
 
 # Bed — SE alcove
 hub.place_activator("hw_bed", x=420, y=-360, z=0)

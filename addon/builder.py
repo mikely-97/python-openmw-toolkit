@@ -294,12 +294,20 @@ class AddonBuilder:
         for f in (flags or []):
             cell_flags |= flag_map.get(f, 0)
 
+        def _pack_color(c: int) -> bytes:
+            # Input convention: 0xRRGGBBAA (R in most-significant byte).
+            # TES3 on-disk layout: bytes [R, G, B, A] in address order.
+            return struct.pack("<BBBB",
+                               (c >> 24) & 0xFF,
+                               (c >> 16) & 0xFF,
+                               (c >>  8) & 0xFF,
+                               c & 0xFF)
+
         subrecords: list[dict] = [
             _str_sr("NAME", name),
             _raw_sr("DATA", struct.pack("<Iii", cell_flags, 0, 0)),
-            _raw_sr("AMBI", struct.pack("<IIII",
-                                        ambient, sunlight, fog_color,
-                                        int(fog_density * 1000))),
+            _raw_sr("AMBI", _pack_color(ambient) + _pack_color(sunlight) +
+                            _pack_color(fog_color) + struct.pack("<f", fog_density)),
         ]
         if water_height != 0.0:
             subrecords.append(_raw_sr("WHGT", struct.pack("<f", water_height)))
@@ -603,17 +611,22 @@ class AddonBuilder:
             ],
         })
         for resp in (responses or []):
-            self._add_info(resp)
+            self._add_info(resp, topic_type)
         return self
 
-    def _add_info(self, resp: dict) -> None:
+    def _add_info(self, resp: dict, topic_type: int = 0) -> None:
         subrecords = [
             _str_sr("INAM", resp.get("id", "")),
             _str_sr("PNAM", resp.get("prev_id", "")),
             _str_sr("NNAM", resp.get("next_id", "")),
         ]
-        subrecords.append(_raw_sr("DATA", struct.pack("<BBBI",
-            0, resp.get("disposition", 0), 0, 0)))
+        # DATA must be exactly 12 bytes:
+        # int32 type, int32 disposition, int8 npc_rank, int8 gender, int8 pc_rank, int8 padding
+        # -1 means "any" for rank/gender fields.
+        subrecords.append(_raw_sr("DATA", struct.pack("<iibbbb",
+            topic_type,
+            resp.get("disposition", 0),
+            -1, -1, -1, 0)))
         if resp.get("speaker_id"):
             subrecords.append(_str_sr("ONAM", resp["speaker_id"]))
         if resp.get("speaker_race"):

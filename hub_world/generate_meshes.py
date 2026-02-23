@@ -502,9 +502,11 @@ def out(filename: str):
 # ===========================================================================
 
 def build_plant_herb():
+    """Herb plant: thin stem + cross of flat leaf blades (not a mushroom cap)."""
     return [
-        SubMesh("stem", 0.22, 0.48, 0.08).cylinder(radius=3,  height=30),
-        SubMesh("leaf", 0.12, 0.68, 0.12).cylinder(radius=18, height=12, oz=22),
+        SubMesh("stem",  0.22, 0.48, 0.08).cylinder(radius=2, height=22),
+        SubMesh("leafA", 0.14, 0.66, 0.10).box(24, 4, 5, oz=18),   # E-W blade
+        SubMesh("leafB", 0.14, 0.66, 0.10).box(4, 24, 5, oz=18),   # N-S blade
     ]
 
 
