@@ -92,18 +92,28 @@ class CellBuilder:
         destination_cell: str = "",
         destination_pos: tuple[float, float, float] = (0.0, 0.0, 0.0),
         destination_rot: tuple[float, float, float] = (0.0, 0.0, 0.0),
+        lock_level: int = 0,
+        key_id: str = "",
     ) -> "CellBuilder":
-        """Place a door and optionally wire its teleport destination."""
+        """Place a door and optionally wire its teleport destination and lock.
+
+        lock_level: 0 = unlocked.  Non-zero = locked; player needs key_id to open.
+        key_id:     ID of a MISC item that acts as the key (not consumed on use).
+        """
         self._place(door_id, x, y, z, rot_z=rot_z)
+        srs = self._record["subrecords"]
         if destination_cell:
             dx, dy, dz = destination_pos
             drx, dry, drz = destination_rot
-            srs = self._record["subrecords"]
             srs.append({
                 "tag": "DODT",
                 "raw": struct.pack("<ffffff", dx, dy, dz, drx, dry, drz),
             })
             srs.append(_str_sr("DNAM", destination_cell))
+        if lock_level > 0:
+            srs.append(_ref_sr("FLTV", struct.pack("<I", lock_level)))
+        if key_id:
+            srs.append(_str_sr("KNAM", key_id))
         return self
 
     def place_container(
@@ -127,6 +137,20 @@ class CellBuilder:
     ) -> "CellBuilder":
         """Place a light source."""
         return self._place(light_id, x, y, z, rot_z=rot_z)
+
+    def place_activator(
+        self,
+        acti_id: str,
+        x: float = 0.0,
+        y: float = 0.0,
+        z: float = 0.0,
+        rot_x: float = 0.0,
+        rot_y: float = 0.0,
+        rot_z: float = 0.0,
+        scale: float = 1.0,
+    ) -> "CellBuilder":
+        """Place an activator (ACTI) reference into the cell."""
+        return self._place(acti_id, x, y, z, rot_x, rot_y, rot_z, scale)
 
     def place_item(
         self,

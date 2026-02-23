@@ -1,0 +1,12 @@
+# Hub World Lua Scripts
+# Register in openmw.cfg with: content=hub_world.omwscripts
+#
+# Script types:
+#   GLOBAL    – always running, handles all game-state mutations
+#   PLAYER    – runs on the player character, displays messages
+#   ACTIVATOR – runs on every ACTIVATOR object in the loaded game world;
+#               filtered by recordId inside activator.lua to avoid overhead
+
+GLOBAL:    scripts/hub/global.lua
+PLAYER:    scripts/hub/player.lua
+ACTIVATOR: scripts/hub/activator.lua

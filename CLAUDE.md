@@ -741,8 +741,11 @@ end
   `data` directory. The addon only needs the `.omwscripts` manifest.
 - **SCDT bytecode is optional in OpenMW**: source-only (`SCTX`) scripts are
   compiled on load. For distribution include bytecode if possible.
-- **`MODL` / `ITEX` paths** are VFS-relative, e.g. `meshes/x/myobj.nif` or
-  `icons/m/my_icon.dds`. They are looked up across all registered `data=` dirs.
+- **`MODL` / `ITEX` paths** are stored **without** the leading `meshes/` or `icons/`
+  directory prefix — the engine adds those automatically on lookup. Store as
+  `x/myobj.nif` (not `meshes/x/myobj.nif`) and `m/my_icon.dds` (not
+  `icons/m/my_icon.dds`). Storing the full path causes a double-prefix at runtime:
+  `Failed to load 'meshes/meshes/x/myobj.nif': Resource not found`.
 - **Hot-reload Lua**: use `reloadlua` in the OpenMW in-game console. Only works
   for loose files (not packed inside a `.omwaddon`).
 
@@ -762,6 +765,28 @@ These will crash OpenMW at load with a fatal ESM error; not just warnings:
 - **`CELL/DATA` tag is overloaded**: 12-byte payload = cell header (`<Iii`);
   24-byte payload = object reference position (`<ffffff` = x, y, z, rot_x, rot_y, rot_z).
   The reader dispatches by size. The position order is position-first, rotation-second.
+
+- **`MISC/MCDT` must be exactly 12 bytes** — `struct.pack("<fII", weight, value, flags)`.
+  Using `<fIH` (10 bytes) crashes with:
+  `ESM Error: record size mismatch, requested 12, got 10 — Record: MISC Subrecord: MCDT`
+
+- **`NPC_/NPDT` autocalc form must be exactly 12 bytes** — `struct.pack("<HBBBxxxI", level, disposition, reputation, rank, gold)`.
+  That is: level(H=2) + disposition(B=1) + reputation(B=1) + rank(B=1) + 3 padding bytes + gold(I=4) = 12.
+  Using `<HBB6sI` (14 bytes) crashes with:
+  `ESM Error: NPC_NPDT must be 12 or 52 bytes long`
+
+- **`NPC_/AIDT` must be exactly 12 bytes** — `struct.pack("<BBBBBBBBI", hello, unknown, fight, flee, alarm, u2, u3, u4, services)`.
+  That is: 8 individual uint8 fields + services(I=4) = 12.
+  Using `<BBBBI` (8 bytes) crashes with:
+  `ESM Error: record size mismatch, requested 12, got 8 — Record: NPC_ Subrecord: AIDT`
+
+- **`LIGH/LHDT` must be exactly 24 bytes** — `struct.pack("<fIiiBBBBI", weight, value, duration, radius, r, g, b, pad, flags)`.
+  That is: weight(f=4) + value(I=4) + duration(i=4) + radius(i=4) + r/g/b(3×B) + pad(B=1) + flags(I=4) = 24.
+  Using `<fIiiBBBB` (20 bytes, flags packed as a single byte) crashes with:
+  `ESM Error: record size mismatch, requested 24, got 20 — Record: LIGH Subrecord: LHDT`
+
+- **`openmw.async:newTimerInRealSeconds` is not available in GLOBAL scripts in OpenMW 0.50**.
+  Use an `onUpdate` handler with a boolean flag instead of a timer for deferred actions.
 
 ### Known non-fatal example suite warnings
 

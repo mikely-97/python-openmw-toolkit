@@ -235,9 +235,9 @@ class AddonBuilder:
             subrecords.append(_str_sr("SCRI", script))
 
         if autocalc:
-            # 12-byte short NPDT: level(H), disposition(B), faction_rank(B),
-            # unknown(6B), gold(I) -- simplified autocalc form
-            npdt = struct.pack("<HBB6sI", level, disposition, 0, b"\x00" * 6, gold)
+            # 12-byte short NPDT: level(H) disposition(B) reputation(B)
+            # rank(B) + 3 padding bytes + gold(I)
+            npdt = struct.pack("<HBBBxxxI", level, disposition, 0, 0, gold)
         else:
             # 52-byte full NPDT
             npdt = struct.pack(
@@ -257,8 +257,11 @@ class AddonBuilder:
             )
         subrecords.append(_raw_sr("NPDT", npdt))
         subrecords.append(_struct_sr("FLAG", "<I", ["flags"], {"flags": flag_val}))
-        subrecords.append(_struct_sr("AIDT", "<BBBBI", ["hello", "unknown", "fight", "flee", "services"],
-                                     {"hello": 30, "unknown": 0, "fight": 30, "flee": 30, "services": services}))
+        # AIDT is 12 bytes: hello(B) unknown(B) fight(B) flee(B) alarm(B)
+        # unknown2(B) unknown3(B) unknown4(B) services(I)
+        aidt_raw = struct.pack("<BBBBBBBBI",
+                               30, 0, 30, 30, 0, 0, 0, 0, services)
+        subrecords.append(_raw_sr("AIDT", aidt_raw))
 
         for item_id, count in (inventory or []):
             item_id_raw = item_id.encode("latin-1").ljust(32, b"\x00")[:32]
@@ -391,16 +394,21 @@ class AddonBuilder:
         is present.
         """
         name_bytes = id.encode("latin-1").ljust(32, b"\x00")[:32]
+        # SCHD is exactly 52 bytes: name(32) + num_shorts(I) + num_longs(I)
+        # + num_floats(I) + script_data_size(I) + local_var_size(I)
         schd_data = struct.pack(
-            "<32sIIII",
-            name_bytes, num_shorts, num_longs, num_floats, 0
+            "<32sIIIII",
+            name_bytes, num_shorts, num_longs, num_floats, 0, 0
         )
 
         subrecords = [_raw_sr("SCHD", schd_data)]
         if variables:
             var_str = "\x00".join(variables) + "\x00"
             subrecords.append(_raw_sr("SCVR", var_str.encode("latin-1")))
-        subrecords.append(_str_sr("SCTX", source))
+        # SCDT (bytecode) must be present even if empty; OpenMW compiles SCTX
+        subrecords.append(_raw_sr("SCDT", b""))
+        # SCTX is raw text — NOT null-terminated
+        subrecords.append(_raw_sr("SCTX", source.encode("latin-1")))
 
         self._append({"tag": "SCPT", "flags": 0, "hdr1": 0, "subrecords": subrecords})
         return self
@@ -496,9 +504,11 @@ class AddonBuilder:
             _str_sr("NAME", id),
             _str_sr("MODL", mesh) if mesh else _str_sr("MODL", ""),
             _str_sr("FNAM", name),
-            _raw_sr("LHDT", struct.pack("<fIiiBBBB",
+            # LHDT is 24 bytes: weight(f) value(I) time(i) radius(i)
+            # red(B) green(B) blue(B) pad(B) flags(I)
+            _raw_sr("LHDT", struct.pack("<fIiiBBBBI",
                                         weight, value, duration, radius,
-                                        r, g, b, flag_val)),
+                                        r, g, b, 0, flag_val)),
         ]
         if icon:
             subrecords.append(_str_sr("ITEX", icon))
@@ -559,7 +569,7 @@ class AddonBuilder:
             _str_sr("NAME", id),
             _str_sr("MODL", mesh),
             _str_sr("FNAM", name),
-            _raw_sr("MCDT", struct.pack("<fIH", weight, value, 0)),
+            _raw_sr("MCDT", struct.pack("<fII", weight, value, 0)),
         ]
         if script:
             subrecords.append(_str_sr("SCRI", script))
@@ -663,6 +673,205 @@ class AddonBuilder:
             subrecords.append(_str_sr("INAM", item_id))
             subrecords.append(_raw_sr("INTV", struct.pack("<H", level)))
         self._append({"tag": "LEVI", "flags": 0, "hdr1": 0, "subrecords": subrecords})
+        return self
+
+    # ---- ACTI — Activator --------------------------------------------------
+
+    def add_activator(
+        self,
+        id: str,
+        name: str = "",
+        mesh: str = "",
+        script: str = "",
+    ) -> "AddonBuilder":
+        """Add an ACTI (activator) record.
+
+        Activators are interactive world objects with no inventory. They fire
+        onActivate when the player (or any actor) clicks them.  Attach a Lua
+        LOCAL script via the .omwscripts manifest; the SCRI field here is for
+        legacy MWScript only.
+        """
+        subrecords = [_str_sr("NAME", id)]
+        if mesh:
+            subrecords.append(_str_sr("MODL", mesh))
+        subrecords.append(_str_sr("FNAM", name))
+        if script:
+            subrecords.append(_str_sr("SCRI", script))
+        self._append({"tag": "ACTI", "flags": 0, "hdr1": 0, "subrecords": subrecords})
+        return self
+
+    # ---- DOOR — Door -------------------------------------------------------
+
+    def add_door_record(
+        self,
+        id: str,
+        name: str = "",
+        mesh: str = "",
+        script: str = "",
+        open_sound: str = "",
+        close_sound: str = "",
+    ) -> "AddonBuilder":
+        """Add a DOOR record (the template; placement happens via CellBuilder.place_door).
+
+        For key-locked doors set lock_level and key_id in CellBuilder.place_door.
+        """
+        subrecords = [
+            _str_sr("NAME", id),
+            _str_sr("MODL", mesh) if mesh else _str_sr("MODL", ""),
+            _str_sr("FNAM", name),
+        ]
+        if script:
+            subrecords.append(_str_sr("SCRI", script))
+        if open_sound:
+            subrecords.append(_str_sr("SNAM", open_sound))
+        if close_sound:
+            subrecords.append(_str_sr("ANAM", close_sound))
+        self._append({"tag": "DOOR", "flags": 0, "hdr1": 0, "subrecords": subrecords})
+        return self
+
+    # ---- WEAP — Weapon -----------------------------------------------------
+
+    def add_weapon(
+        self,
+        id: str,
+        name: str = "",
+        mesh: str = "",
+        icon: str = "",
+        weight: float = 1.0,
+        value: int = 10,
+        type_id: int = 6,
+        health: int = 100,
+        speed: float = 1.0,
+        reach: float = 1.0,
+        chop_min: int = 1,
+        chop_max: int = 6,
+        slash_min: int = 1,
+        slash_max: int = 6,
+        thrust_min: int = 1,
+        thrust_max: int = 6,
+        enchant_pts: int = 0,
+        flags: int = 0,
+        script: str = "",
+        enchantment: str = "",
+    ) -> "AddonBuilder":
+        """Add a WEAP record.
+
+        type_id values:
+          0=Short Blade 1H, 1=Long Blade 1H, 2=Long Blade 2H,
+          3=Blunt 1H, 4=Blunt 2H, 5=Blunt Spear,
+          6=Axe 1H, 7=Axe 2H,
+          8=Bow, 9=Crossbow, 10=Thrown, 11=Arrow, 12=Bolt.
+        flags: 0x01=ignores normal weapon resistance, 0x02=silver.
+        """
+        # WPDT: 32 bytes — weight(f) value(i) type(h) health(h) speed(f) reach(f)
+        #                   enchant(h) chop[2](BB) slash[2](BB) thrust[2](BB) flags(i)
+        wpdt = struct.pack(
+            "<fihhffhBBBBBBi",
+            weight, value, type_id, health, speed, reach,
+            enchant_pts,
+            chop_min, chop_max,
+            slash_min, slash_max,
+            thrust_min, thrust_max,
+            flags,
+        )
+        subrecords = [
+            _str_sr("NAME", id),
+            _str_sr("MODL", mesh) if mesh else _str_sr("MODL", ""),
+            _str_sr("FNAM", name),
+            _raw_sr("WPDT", wpdt),
+        ]
+        if icon:
+            subrecords.append(_str_sr("ITEX", icon))
+        if enchantment:
+            subrecords.append(_str_sr("ENAM", enchantment))
+        if script:
+            subrecords.append(_str_sr("SCRI", script))
+        self._append({"tag": "WEAP", "flags": 0, "hdr1": 0, "subrecords": subrecords})
+        return self
+
+    # ---- APPA — Apparatus --------------------------------------------------
+
+    def add_apparatus(
+        self,
+        id: str,
+        name: str = "",
+        mesh: str = "",
+        icon: str = "",
+        apparatus_type: int = 0,
+        quality: float = 0.5,
+        weight: float = 1.0,
+        value: int = 50,
+        script: str = "",
+    ) -> "AddonBuilder":
+        """Add an APPA (alchemy apparatus) record.
+
+        apparatus_type: 0=Mortar & Pestle, 1=Alembic, 2=Calcinator, 3=Retort.
+        quality: 0.0–1.0+ — higher is better.
+        """
+        # AADT: 16 bytes — type(i) quality(f) weight(f) value(i)
+        aadt = struct.pack("<iffi", apparatus_type, quality, weight, value)
+        subrecords = [
+            _str_sr("NAME", id),
+            _str_sr("MODL", mesh) if mesh else _str_sr("MODL", ""),
+            _str_sr("FNAM", name),
+            _raw_sr("AADT", aadt),
+        ]
+        if icon:
+            subrecords.append(_str_sr("ITEX", icon))
+        if script:
+            subrecords.append(_str_sr("SCRI", script))
+        self._append({"tag": "APPA", "flags": 0, "hdr1": 0, "subrecords": subrecords})
+        return self
+
+    # ---- INGR — Ingredient -------------------------------------------------
+
+    def add_ingredient(
+        self,
+        id: str,
+        name: str = "",
+        mesh: str = "",
+        icon: str = "",
+        weight: float = 0.1,
+        value: int = 5,
+        effects: list[dict] | None = None,
+        script: str = "",
+    ) -> "AddonBuilder":
+        """Add an INGR (alchemy ingredient) record.
+
+        effects: up to 4 dicts with keys 'effect_id', 'skill_id', 'attribute_id'.
+          Use effect_id=-1 for an empty slot.  skill_id and attribute_id default
+          to -1 (not applicable).
+
+        Common effect IDs: 75=Restore Health, 77=Restore Fatigue.
+        """
+        effs = (effects or [])[:4]
+        # Pad to exactly 4 entries
+        while len(effs) < 4:
+            effs.append({"effect_id": -1, "skill_id": -1, "attribute_id": -1})
+
+        # IRDT: 56 bytes — weight(f) value(i) 4×effectId(i) 4×skillId(i) 4×attrId(i)
+        # 1f + 13i = 14 fields = 4+52 = 56 bytes
+        irdt = struct.pack(
+            "<fiiiiiiiiiiiii",
+            weight, value,
+            effs[0]["effect_id"], effs[1]["effect_id"],
+            effs[2]["effect_id"], effs[3]["effect_id"],
+            effs[0].get("skill_id", -1), effs[1].get("skill_id", -1),
+            effs[2].get("skill_id", -1), effs[3].get("skill_id", -1),
+            effs[0].get("attribute_id", -1), effs[1].get("attribute_id", -1),
+            effs[2].get("attribute_id", -1), effs[3].get("attribute_id", -1),
+        )
+        subrecords = [
+            _str_sr("NAME", id),
+            _str_sr("MODL", mesh) if mesh else _str_sr("MODL", ""),
+            _str_sr("FNAM", name),
+            _raw_sr("IRDT", irdt),
+        ]
+        if icon:
+            subrecords.append(_str_sr("ITEX", icon))
+        if script:
+            subrecords.append(_str_sr("SCRI", script))
+        self._append({"tag": "INGR", "flags": 0, "hdr1": 0, "subrecords": subrecords})
         return self
 
     # ---- Append raw record -------------------------------------------------
