@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "openmw-toolkit"
+version = "0.1.0"
+description = "Python toolkit for authoring OpenMW addons (.omwaddon/.omwgame)"
+authors = ["mike"]
+readme = "README.md"
+packages = [
+    {include = "tes3"},
+    {include = "addon"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+
+[tool.poetry.scripts]
+omw-dump = "tools.dump:main"
+omw-validate = "tools.validate:main"
+omw-diff = "tools.diff:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
