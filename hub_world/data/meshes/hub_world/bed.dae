@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-01-01</created>
+    <modified>2026-01-01</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="img_textures_hw_white_dds" name="img_textures_hw_white_dds">
+      <init_from>textures/hw_white.dds</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="Effect_bedframe">
+      <profile_COMMON>
+        <newparam sid="surf_bedframe">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_bedframe">
+          <sampler2D>
+            <source>surf_bedframe</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.42 0.26 0.1 1</color></ambient>
+            <diffuse><texture texture="samp_bedframe" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_mattress">
+      <profile_COMMON>
+        <newparam sid="surf_mattress">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_mattress">
+          <sampler2D>
+            <source>surf_mattress</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.88 0.82 0.7 1</color></ambient>
+            <diffuse><texture texture="samp_mattress" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_headboard">
+      <profile_COMMON>
+        <newparam sid="surf_headboard">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_headboard">
+          <sampler2D>
+            <source>surf_headboard</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.42 0.26 0.1 1</color></ambient>
+            <diffuse><texture texture="samp_headboard" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Mat_bedframe" name="bedframe">
+      <instance_effect url="#Effect_bedframe"/>
+    </material>
+    <material id="Mat_mattress" name="mattress">
+      <instance_effect url="#Effect_mattress"/>
+    </material>
+    <material id="Mat_headboard" name="headboard">
+      <instance_effect url="#Effect_headboard"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Geom_bedframe" name="bedframe">
+      <mesh>
+        <source id="Geom_bedframe-positions">
+          <float_array id="Geom_bedframe-positions-array" count="108">-40 80 0 40 80 0 40 -80 0 -40 80 0 40 -80 0 -40 -80 0 -40 -80 20 40 -80 20 40 80 20 -40 -80 20 40 80 20 -40 80 20 -40 -80 0 40 -80 0 40 -80 20 -40 -80 0 40 -80 20 -40 -80 20 40 80 0 -40 80 0 -40 80 20 40 80 0 -40 80 20 40 80 20 -40 -80 0 -40 -80 20 -40 80 20 -40 -80 0 -40 80 20 -40 80 0 40 80 0 40 80 20 40 -80 20 40 80 0 40 -80 20 40 -80 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_bedframe-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_bedframe-normals">
+          <float_array id="Geom_bedframe-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_bedframe-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_bedframe-texcoords">
+          <float_array id="Geom_bedframe-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_bedframe-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_bedframe-vertices">
+          <input semantic="POSITION" source="#Geom_bedframe-positions"/>
+        </vertices>
+        <triangles count="12" material="bedframe">
+          <input semantic="VERTEX"   source="#Geom_bedframe-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_bedframe-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_bedframe-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_mattress" name="mattress">
+      <mesh>
+        <source id="Geom_mattress-positions">
+          <float_array id="Geom_mattress-positions-array" count="108">-37.5 77.5 20 37.5 77.5 20 37.5 -77.5 20 -37.5 77.5 20 37.5 -77.5 20 -37.5 -77.5 20 -37.5 -77.5 35 37.5 -77.5 35 37.5 77.5 35 -37.5 -77.5 35 37.5 77.5 35 -37.5 77.5 35 -37.5 -77.5 20 37.5 -77.5 20 37.5 -77.5 35 -37.5 -77.5 20 37.5 -77.5 35 -37.5 -77.5 35 37.5 77.5 20 -37.5 77.5 20 -37.5 77.5 35 37.5 77.5 20 -37.5 77.5 35 37.5 77.5 35 -37.5 -77.5 20 -37.5 -77.5 35 -37.5 77.5 35 -37.5 -77.5 20 -37.5 77.5 35 -37.5 77.5 20 37.5 77.5 20 37.5 77.5 35 37.5 -77.5 35 37.5 77.5 20 37.5 -77.5 35 37.5 -77.5 20</float_array>
+          <technique_common>
+            <accessor source="#Geom_mattress-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_mattress-normals">
+          <float_array id="Geom_mattress-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_mattress-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_mattress-texcoords">
+          <float_array id="Geom_mattress-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_mattress-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_mattress-vertices">
+          <input semantic="POSITION" source="#Geom_mattress-positions"/>
+        </vertices>
+        <triangles count="12" material="mattress">
+          <input semantic="VERTEX"   source="#Geom_mattress-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_mattress-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_mattress-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_headboard" name="headboard">
+      <mesh>
+        <source id="Geom_headboard-positions">
+          <float_array id="Geom_headboard-positions-array" count="108">-40 80 0 40 80 0 40 70 0 -40 80 0 40 70 0 -40 70 0 -40 70 60 40 70 60 40 80 60 -40 70 60 40 80 60 -40 80 60 -40 70 0 40 70 0 40 70 60 -40 70 0 40 70 60 -40 70 60 40 80 0 -40 80 0 -40 80 60 40 80 0 -40 80 60 40 80 60 -40 70 0 -40 70 60 -40 80 60 -40 70 0 -40 80 60 -40 80 0 40 80 0 40 80 60 40 70 60 40 80 0 40 70 60 40 70 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_headboard-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_headboard-normals">
+          <float_array id="Geom_headboard-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_headboard-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_headboard-texcoords">
+          <float_array id="Geom_headboard-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_headboard-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_headboard-vertices">
+          <input semantic="POSITION" source="#Geom_headboard-positions"/>
+        </vertices>
+        <triangles count="12" material="headboard">
+          <input semantic="VERTEX"   source="#Geom_headboard-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_headboard-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_headboard-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Node_bedframe" name="bedframe" type="NODE">
+        <instance_geometry url="#Geom_bedframe">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="bedframe" target="#Mat_bedframe">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_mattress" name="mattress" type="NODE">
+        <instance_geometry url="#Geom_mattress">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="mattress" target="#Mat_mattress">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_headboard" name="headboard" type="NODE">
+        <instance_geometry url="#Geom_headboard">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="headboard" target="#Mat_headboard">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

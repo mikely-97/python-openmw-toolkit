@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-01-01</created>
+    <modified>2026-01-01</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="img_textures_hw_white_dds" name="img_textures_hw_white_dds">
+      <init_from>textures/hw_white.dds</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="Effect_trunk">
+      <profile_COMMON>
+        <newparam sid="surf_trunk">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_trunk">
+          <sampler2D>
+            <source>surf_trunk</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.35 0.22 0.08 1</color></ambient>
+            <diffuse><texture texture="samp_trunk" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_canopy">
+      <profile_COMMON>
+        <newparam sid="surf_canopy">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_canopy">
+          <sampler2D>
+            <source>surf_canopy</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.1 0.42 0.08 1</color></ambient>
+            <diffuse><texture texture="samp_canopy" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Mat_trunk" name="trunk">
+      <instance_effect url="#Effect_trunk"/>
+    </material>
+    <material id="Mat_canopy" name="canopy">
+      <instance_effect url="#Effect_canopy"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Geom_trunk" name="trunk">
+      <mesh>
+        <source id="Geom_trunk-positions">
+          <float_array id="Geom_trunk-positions-array" count="432">12 0 0 10.3923 6 0 10.3923 6 100 12 0 0 10.3923 6 100 12 0 100 0 0 0 10.3923 6 0 12 0 0 0 0 100 12 0 100 10.3923 6 100 10.3923 6 0 6 10.3923 0 6 10.3923 100 10.3923 6 0 6 10.3923 100 10.3923 6 100 0 0 0 6 10.3923 0 10.3923 6 0 0 0 100 10.3923 6 100 6 10.3923 100 6 10.3923 0 7.34788e-16 12 0 7.34788e-16 12 100 6 10.3923 0 7.34788e-16 12 100 6 10.3923 100 0 0 0 7.34788e-16 12 0 6 10.3923 0 0 0 100 6 10.3923 100 7.34788e-16 12 100 7.34788e-16 12 0 -6 10.3923 0 -6 10.3923 100 7.34788e-16 12 0 -6 10.3923 100 7.34788e-16 12 100 0 0 0 -6 10.3923 0 7.34788e-16 12 0 0 0 100 7.34788e-16 12 100 -6 10.3923 100 -6 10.3923 0 -10.3923 6 0 -10.3923 6 100 -6 10.3923 0 -10.3923 6 100 -6 10.3923 100 0 0 0 -10.3923 6 0 -6 10.3923 0 0 0 100 -6 10.3923 100 -10.3923 6 100 -10.3923 6 0 -12 1.46958e-15 0 -12 1.46958e-15 100 -10.3923 6 0 -12 1.46958e-15 100 -10.3923 6 100 0 0 0 -12 1.46958e-15 0 -10.3923 6 0 0 0 100 -10.3923 6 100 -12 1.46958e-15 100 -12 1.46958e-15 0 -10.3923 -6 0 -10.3923 -6 100 -12 1.46958e-15 0 -10.3923 -6 100 -12 1.46958e-15 100 0 0 0 -10.3923 -6 0 -12 1.46958e-15 0 0 0 100 -12 1.46958e-15 100 -10.3923 -6 100 -10.3923 -6 0 -6 -10.3923 0 -6 -10.3923 100 -10.3923 -6 0 -6 -10.3923 100 -10.3923 -6 100 0 0 0 -6 -10.3923 0 -10.3923 -6 0 0 0 100 -10.3923 -6 100 -6 -10.3923 100 -6 -10.3923 0 -2.20436e-15 -12 0 -2.20436e-15 -12 100 -6 -10.3923 0 -2.20436e-15 -12 100 -6 -10.3923 100 0 0 0 -2.20436e-15 -12 0 -6 -10.3923 0 0 0 100 -6 -10.3923 100 -2.20436e-15 -12 100 -2.20436e-15 -12 0 6 -10.3923 0 6 -10.3923 100 -2.20436e-15 -12 0 6 -10.3923 100 -2.20436e-15 -12 100 0 0 0 6 -10.3923 0 -2.20436e-15 -12 0 0 0 100 -2.20436e-15 -12 100 6 -10.3923 100 6 -10.3923 0 10.3923 -6 0 10.3923 -6 100 6 -10.3923 0 10.3923 -6 100 6 -10.3923 100 0 0 0 10.3923 -6 0 6 -10.3923 0 0 0 100 6 -10.3923 100 10.3923 -6 100 10.3923 -6 0 12 0 0 12 0 100 10.3923 -6 0 12 0 100 10.3923 -6 100 0 0 0 12 0 0 10.3923 -6 0 0 0 100 10.3923 -6 100 12 0 100</float_array>
+          <technique_common>
+            <accessor source="#Geom_trunk-positions-array" count="144" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_trunk-normals">
+          <float_array id="Geom_trunk-normals-array" count="144">0.965926 0.258819 0 0.965926 0.258819 -0 0 0 -1 0 0 1 0.707107 0.707107 0 0.707107 0.707107 -0 0 0 -1 0 0 1 0.258819 0.965926 0 0.258819 0.965926 -0 0 0 -1 0 0 1 -0.258819 0.965926 0 -0.258819 0.965926 0 0 0 -1 0 -0 1 -0.707107 0.707107 0 -0.707107 0.707107 0 0 0 -1 0 0 1 -0.965926 0.258819 0 -0.965926 0.258819 0 0 0 -1 0 0 1 -0.965926 -0.258819 0 -0.965926 -0.258819 0 -0 0 -1 0 0 1 -0.707107 -0.707107 0 -0.707107 -0.707107 0 0 0 -1 0 0 1 -0.258819 -0.965926 0 -0.258819 -0.965926 0 0 0 -1 0 0 1 0.258819 -0.965926 0 0.258819 -0.965926 0 0 -0 -1 0 0 1 0.707107 -0.707107 0 0.707107 -0.707107 0 0 0 -1 0 0 1 0.965926 -0.258819 0 0.965926 -0.258819 0 0 0 -1 -0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Geom_trunk-normals-array" count="48" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_trunk-texcoords">
+          <float_array id="Geom_trunk-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_trunk-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_trunk-vertices">
+          <input semantic="POSITION" source="#Geom_trunk-positions"/>
+        </vertices>
+        <triangles count="48" material="trunk">
+          <input semantic="VERTEX"   source="#Geom_trunk-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_trunk-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_trunk-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0 36 12 0 37 12 0 38 12 0 39 13 0 40 13 0 41 13 0 42 14 0 43 14 0 44 14 0 45 15 0 46 15 0 47 15 0 48 16 0 49 16 0 50 16 0 51 17 0 52 17 0 53 17 0 54 18 0 55 18 0 56 18 0 57 19 0 58 19 0 59 19 0 60 20 0 61 20 0 62 20 0 63 21 0 64 21 0 65 21 0 66 22 0 67 22 0 68 22 0 69 23 0 70 23 0 71 23 0 72 24 0 73 24 0 74 24 0 75 25 0 76 25 0 77 25 0 78 26 0 79 26 0 80 26 0 81 27 0 82 27 0 83 27 0 84 28 0 85 28 0 86 28 0 87 29 0 88 29 0 89 29 0 90 30 0 91 30 0 92 30 0 93 31 0 94 31 0 95 31 0 96 32 0 97 32 0 98 32 0 99 33 0 100 33 0 101 33 0 102 34 0 103 34 0 104 34 0 105 35 0 106 35 0 107 35 0 108 36 0 109 36 0 110 36 0 111 37 0 112 37 0 113 37 0 114 38 0 115 38 0 116 38 0 117 39 0 118 39 0 119 39 0 120 40 0 121 40 0 122 40 0 123 41 0 124 41 0 125 41 0 126 42 0 127 42 0 128 42 0 129 43 0 130 43 0 131 43 0 132 44 0 133 44 0 134 44 0 135 45 0 136 45 0 137 45 0 138 46 0 139 46 0 140 46 0 141 47 0 142 47 0 143 47 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_canopy" name="canopy">
+      <mesh>
+        <source id="Geom_canopy-positions">
+          <float_array id="Geom_canopy-positions-array" count="216">70 0 80 60.6218 35 80 0 0 210 0 0 80 60.6218 35 80 70 0 80 60.6218 35 80 35 60.6218 80 0 0 210 0 0 80 35 60.6218 80 60.6218 35 80 35 60.6218 80 4.28626e-15 70 80 0 0 210 0 0 80 4.28626e-15 70 80 35 60.6218 80 4.28626e-15 70 80 -35 60.6218 80 0 0 210 0 0 80 -35 60.6218 80 4.28626e-15 70 80 -35 60.6218 80 -60.6218 35 80 0 0 210 0 0 80 -60.6218 35 80 -35 60.6218 80 -60.6218 35 80 -70 8.57253e-15 80 0 0 210 0 0 80 -70 8.57253e-15 80 -60.6218 35 80 -70 8.57253e-15 80 -60.6218 -35 80 0 0 210 0 0 80 -60.6218 -35 80 -70 8.57253e-15 80 -60.6218 -35 80 -35 -60.6218 80 0 0 210 0 0 80 -35 -60.6218 80 -60.6218 -35 80 -35 -60.6218 80 -1.28588e-14 -70 80 0 0 210 0 0 80 -1.28588e-14 -70 80 -35 -60.6218 80 -1.28588e-14 -70 80 35 -60.6218 80 0 0 210 0 0 80 35 -60.6218 80 -1.28588e-14 -70 80 35 -60.6218 80 60.6218 -35 80 0 0 210 0 0 80 60.6218 -35 80 35 -60.6218 80 60.6218 -35 80 70 0 80 0 0 210 0 0 80 70 0 80 60.6218 -35 80</float_array>
+          <technique_common>
+            <accessor source="#Geom_canopy-positions-array" count="72" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_canopy-normals">
+          <float_array id="Geom_canopy-normals-array" count="72">0.856946 0.229618 0.461432 0 0 -1 0.627328 0.627328 0.461432 0 0 -1 0.229618 0.856946 0.461432 0 0 -1 -0.229618 0.856946 0.461432 0 0 -1 -0.627328 0.627328 0.461432 0 0 -1 -0.856946 0.229618 0.461432 0 0 -1 -0.856946 -0.229618 0.461432 -0 0 -1 -0.627328 -0.627328 0.461432 0 0 -1 -0.229618 -0.856946 0.461432 0 0 -1 0.229618 -0.856946 0.461432 0 -0 -1 0.627328 -0.627328 0.461432 0 0 -1 0.856946 -0.229618 0.461432 0 0 -1</float_array>
+          <technique_common>
+            <accessor source="#Geom_canopy-normals-array" count="24" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_canopy-texcoords">
+          <float_array id="Geom_canopy-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_canopy-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_canopy-vertices">
+          <input semantic="POSITION" source="#Geom_canopy-positions"/>
+        </vertices>
+        <triangles count="24" material="canopy">
+          <input semantic="VERTEX"   source="#Geom_canopy-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_canopy-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_canopy-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0 36 12 0 37 12 0 38 12 0 39 13 0 40 13 0 41 13 0 42 14 0 43 14 0 44 14 0 45 15 0 46 15 0 47 15 0 48 16 0 49 16 0 50 16 0 51 17 0 52 17 0 53 17 0 54 18 0 55 18 0 56 18 0 57 19 0 58 19 0 59 19 0 60 20 0 61 20 0 62 20 0 63 21 0 64 21 0 65 21 0 66 22 0 67 22 0 68 22 0 69 23 0 70 23 0 71 23 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Node_trunk" name="trunk" type="NODE">
+        <instance_geometry url="#Geom_trunk">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="trunk" target="#Mat_trunk">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_canopy" name="canopy" type="NODE">
+        <instance_geometry url="#Geom_canopy">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="canopy" target="#Mat_canopy">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

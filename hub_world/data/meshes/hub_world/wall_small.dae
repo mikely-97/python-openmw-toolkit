@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-01-01</created>
+    <modified>2026-01-01</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="img_textures_hw_brick_dds" name="img_textures_hw_brick_dds">
+      <init_from>textures/hw_brick.dds</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="Effect_wall_small">
+      <profile_COMMON>
+        <newparam sid="surf_wall_small">
+          <surface type="2D">
+            <init_from>img_textures_hw_brick_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_wall_small">
+          <sampler2D>
+            <source>surf_wall_small</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.38 0.38 0.4 1</color></ambient>
+            <diffuse><texture texture="samp_wall_small" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Mat_wall_small" name="wall_small">
+      <instance_effect url="#Effect_wall_small"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Geom_wall_small" name="wall_small">
+      <mesh>
+        <source id="Geom_wall_small-positions">
+          <float_array id="Geom_wall_small-positions-array" count="108">-660 10 0 660 10 0 660 -10 0 -660 10 0 660 -10 0 -660 -10 0 -660 -10 500 660 -10 500 660 10 500 -660 -10 500 660 10 500 -660 10 500 -660 -10 0 660 -10 0 660 -10 500 -660 -10 0 660 -10 500 -660 -10 500 660 10 0 -660 10 0 -660 10 500 660 10 0 -660 10 500 660 10 500 -660 -10 0 -660 -10 500 -660 10 500 -660 -10 0 -660 10 500 -660 10 0 660 10 0 660 10 500 660 -10 500 660 10 0 660 -10 500 660 -10 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_wall_small-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_wall_small-normals">
+          <float_array id="Geom_wall_small-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_wall_small-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_wall_small-texcoords">
+          <float_array id="Geom_wall_small-texcoords-array" count="72">-5.15625 0.078125 5.15625 0.078125 5.15625 -0.078125 -5.15625 0.078125 5.15625 -0.078125 -5.15625 -0.078125 -5.15625 -0.078125 5.15625 -0.078125 5.15625 0.078125 -5.15625 -0.078125 5.15625 0.078125 -5.15625 0.078125 -5.15625 0 5.15625 0 5.15625 3.90625 -5.15625 0 5.15625 3.90625 -5.15625 3.90625 5.15625 0 -5.15625 0 -5.15625 3.90625 5.15625 0 -5.15625 3.90625 5.15625 3.90625 -0.078125 0 -0.078125 3.90625 0.078125 3.90625 -0.078125 0 0.078125 3.90625 0.078125 0 0.078125 0 0.078125 3.90625 -0.078125 3.90625 0.078125 0 -0.078125 3.90625 -0.078125 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_wall_small-texcoords-array" count="36" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_wall_small-vertices">
+          <input semantic="POSITION" source="#Geom_wall_small-positions"/>
+        </vertices>
+        <triangles count="12" material="wall_small">
+          <input semantic="VERTEX"   source="#Geom_wall_small-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_wall_small-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_wall_small-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 1 2 0 2 3 1 3 4 1 4 5 1 5 6 2 6 7 2 7 8 2 8 9 3 9 10 3 10 11 3 11 12 4 12 13 4 13 14 4 14 15 5 15 16 5 16 17 5 17 18 6 18 19 6 19 20 6 20 21 7 21 22 7 22 23 7 23 24 8 24 25 8 25 26 8 26 27 9 27 28 9 28 29 9 29 30 10 30 31 10 31 32 10 32 33 11 33 34 11 34 35 11 35</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Node_wall_small" name="wall_small" type="NODE">
+        <instance_geometry url="#Geom_wall_small">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="wall_small" target="#Mat_wall_small">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

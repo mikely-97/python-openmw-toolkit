@@ -39,11 +39,9 @@ local HW_IDS = {
     -- Stations
     hw_bed=true, hw_anvil=true, hw_forge=true,
     hw_mine_refresh_station=true,
-    -- Doors
-    hw_door_garden=true,
+    -- Doors (only ACTI doors — garden uses real DOOR records handled by engine)
     hw_door_forest=true,
     hw_door_mine=true,
-    hw_door_return_garden=true,
     hw_door_return_forest=true,
     hw_door_return_mine=true,
 }
@@ -67,6 +65,6 @@ end
 
 return {
     engineHandlers = {
-        onActivate = onActivate,
+        onActivated = onActivate,   -- LOCAL handler is onActivated(actor)
     },
 }

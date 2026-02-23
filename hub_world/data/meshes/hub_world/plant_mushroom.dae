@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-01-01</created>
+    <modified>2026-01-01</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="img_textures_hw_white_dds" name="img_textures_hw_white_dds">
+      <init_from>textures/hw_white.dds</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="Effect_mstem">
+      <profile_COMMON>
+        <newparam sid="surf_mstem">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_mstem">
+          <sampler2D>
+            <source>surf_mstem</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.82 0.78 0.62 1</color></ambient>
+            <diffuse><texture texture="samp_mstem" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_mcap">
+      <profile_COMMON>
+        <newparam sid="surf_mcap">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_mcap">
+          <sampler2D>
+            <source>surf_mcap</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.65 0.18 0.08 1</color></ambient>
+            <diffuse><texture texture="samp_mcap" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Mat_mstem" name="mstem">
+      <instance_effect url="#Effect_mstem"/>
+    </material>
+    <material id="Mat_mcap" name="mcap">
+      <instance_effect url="#Effect_mcap"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Geom_mstem" name="mstem">
+      <mesh>
+        <source id="Geom_mstem-positions">
+          <float_array id="Geom_mstem-positions-array" count="432">5 0 0 4.33013 2.5 0 4.33013 2.5 20 5 0 0 4.33013 2.5 20 5 0 20 0 0 0 4.33013 2.5 0 5 0 0 0 0 20 5 0 20 4.33013 2.5 20 4.33013 2.5 0 2.5 4.33013 0 2.5 4.33013 20 4.33013 2.5 0 2.5 4.33013 20 4.33013 2.5 20 0 0 0 2.5 4.33013 0 4.33013 2.5 0 0 0 20 4.33013 2.5 20 2.5 4.33013 20 2.5 4.33013 0 3.06162e-16 5 0 3.06162e-16 5 20 2.5 4.33013 0 3.06162e-16 5 20 2.5 4.33013 20 0 0 0 3.06162e-16 5 0 2.5 4.33013 0 0 0 20 2.5 4.33013 20 3.06162e-16 5 20 3.06162e-16 5 0 -2.5 4.33013 0 -2.5 4.33013 20 3.06162e-16 5 0 -2.5 4.33013 20 3.06162e-16 5 20 0 0 0 -2.5 4.33013 0 3.06162e-16 5 0 0 0 20 3.06162e-16 5 20 -2.5 4.33013 20 -2.5 4.33013 0 -4.33013 2.5 0 -4.33013 2.5 20 -2.5 4.33013 0 -4.33013 2.5 20 -2.5 4.33013 20 0 0 0 -4.33013 2.5 0 -2.5 4.33013 0 0 0 20 -2.5 4.33013 20 -4.33013 2.5 20 -4.33013 2.5 0 -5 6.12323e-16 0 -5 6.12323e-16 20 -4.33013 2.5 0 -5 6.12323e-16 20 -4.33013 2.5 20 0 0 0 -5 6.12323e-16 0 -4.33013 2.5 0 0 0 20 -4.33013 2.5 20 -5 6.12323e-16 20 -5 6.12323e-16 0 -4.33013 -2.5 0 -4.33013 -2.5 20 -5 6.12323e-16 0 -4.33013 -2.5 20 -5 6.12323e-16 20 0 0 0 -4.33013 -2.5 0 -5 6.12323e-16 0 0 0 20 -5 6.12323e-16 20 -4.33013 -2.5 20 -4.33013 -2.5 0 -2.5 -4.33013 0 -2.5 -4.33013 20 -4.33013 -2.5 0 -2.5 -4.33013 20 -4.33013 -2.5 20 0 0 0 -2.5 -4.33013 0 -4.33013 -2.5 0 0 0 20 -4.33013 -2.5 20 -2.5 -4.33013 20 -2.5 -4.33013 0 -9.18485e-16 -5 0 -9.18485e-16 -5 20 -2.5 -4.33013 0 -9.18485e-16 -5 20 -2.5 -4.33013 20 0 0 0 -9.18485e-16 -5 0 -2.5 -4.33013 0 0 0 20 -2.5 -4.33013 20 -9.18485e-16 -5 20 -9.18485e-16 -5 0 2.5 -4.33013 0 2.5 -4.33013 20 -9.18485e-16 -5 0 2.5 -4.33013 20 -9.18485e-16 -5 20 0 0 0 2.5 -4.33013 0 -9.18485e-16 -5 0 0 0 20 -9.18485e-16 -5 20 2.5 -4.33013 20 2.5 -4.33013 0 4.33013 -2.5 0 4.33013 -2.5 20 2.5 -4.33013 0 4.33013 -2.5 20 2.5 -4.33013 20 0 0 0 4.33013 -2.5 0 2.5 -4.33013 0 0 0 20 2.5 -4.33013 20 4.33013 -2.5 20 4.33013 -2.5 0 5 0 0 5 0 20 4.33013 -2.5 0 5 0 20 4.33013 -2.5 20 0 0 0 5 0 0 4.33013 -2.5 0 0 0 20 4.33013 -2.5 20 5 0 20</float_array>
+          <technique_common>
+            <accessor source="#Geom_mstem-positions-array" count="144" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_mstem-normals">
+          <float_array id="Geom_mstem-normals-array" count="144">0.965926 0.258819 0 0.965926 0.258819 -0 0 0 -1 0 0 1 0.707107 0.707107 0 0.707107 0.707107 -0 0 0 -1 0 0 1 0.258819 0.965926 0 0.258819 0.965926 -0 0 0 -1 0 0 1 -0.258819 0.965926 0 -0.258819 0.965926 0 0 0 -1 0 -0 1 -0.707107 0.707107 0 -0.707107 0.707107 0 0 0 -1 0 0 1 -0.965926 0.258819 0 -0.965926 0.258819 0 0 0 -1 0 0 1 -0.965926 -0.258819 0 -0.965926 -0.258819 0 -0 0 -1 0 0 1 -0.707107 -0.707107 0 -0.707107 -0.707107 0 0 0 -1 0 0 1 -0.258819 -0.965926 0 -0.258819 -0.965926 0 0 0 -1 0 0 1 0.258819 -0.965926 0 0.258819 -0.965926 0 0 -0 -1 0 0 1 0.707107 -0.707107 0 0.707107 -0.707107 0 0 0 -1 0 0 1 0.965926 -0.258819 0 0.965926 -0.258819 0 0 0 -1 -0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Geom_mstem-normals-array" count="48" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_mstem-texcoords">
+          <float_array id="Geom_mstem-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_mstem-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_mstem-vertices">
+          <input semantic="POSITION" source="#Geom_mstem-positions"/>
+        </vertices>
+        <triangles count="48" material="mstem">
+          <input semantic="VERTEX"   source="#Geom_mstem-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_mstem-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_mstem-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0 36 12 0 37 12 0 38 12 0 39 13 0 40 13 0 41 13 0 42 14 0 43 14 0 44 14 0 45 15 0 46 15 0 47 15 0 48 16 0 49 16 0 50 16 0 51 17 0 52 17 0 53 17 0 54 18 0 55 18 0 56 18 0 57 19 0 58 19 0 59 19 0 60 20 0 61 20 0 62 20 0 63 21 0 64 21 0 65 21 0 66 22 0 67 22 0 68 22 0 69 23 0 70 23 0 71 23 0 72 24 0 73 24 0 74 24 0 75 25 0 76 25 0 77 25 0 78 26 0 79 26 0 80 26 0 81 27 0 82 27 0 83 27 0 84 28 0 85 28 0 86 28 0 87 29 0 88 29 0 89 29 0 90 30 0 91 30 0 92 30 0 93 31 0 94 31 0 95 31 0 96 32 0 97 32 0 98 32 0 99 33 0 100 33 0 101 33 0 102 34 0 103 34 0 104 34 0 105 35 0 106 35 0 107 35 0 108 36 0 109 36 0 110 36 0 111 37 0 112 37 0 113 37 0 114 38 0 115 38 0 116 38 0 117 39 0 118 39 0 119 39 0 120 40 0 121 40 0 122 40 0 123 41 0 124 41 0 125 41 0 126 42 0 127 42 0 128 42 0 129 43 0 130 43 0 131 43 0 132 44 0 133 44 0 134 44 0 135 45 0 136 45 0 137 45 0 138 46 0 139 46 0 140 46 0 141 47 0 142 47 0 143 47 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_mcap" name="mcap">
+      <mesh>
+        <source id="Geom_mcap-positions">
+          <float_array id="Geom_mcap-positions-array" count="432">30 0 18 25.9808 15 18 25.9808 15 28 30 0 18 25.9808 15 28 30 0 28 0 0 18 25.9808 15 18 30 0 18 0 0 28 30 0 28 25.9808 15 28 25.9808 15 18 15 25.9808 18 15 25.9808 28 25.9808 15 18 15 25.9808 28 25.9808 15 28 0 0 18 15 25.9808 18 25.9808 15 18 0 0 28 25.9808 15 28 15 25.9808 28 15 25.9808 18 1.83697e-15 30 18 1.83697e-15 30 28 15 25.9808 18 1.83697e-15 30 28 15 25.9808 28 0 0 18 1.83697e-15 30 18 15 25.9808 18 0 0 28 15 25.9808 28 1.83697e-15 30 28 1.83697e-15 30 18 -15 25.9808 18 -15 25.9808 28 1.83697e-15 30 18 -15 25.9808 28 1.83697e-15 30 28 0 0 18 -15 25.9808 18 1.83697e-15 30 18 0 0 28 1.83697e-15 30 28 -15 25.9808 28 -15 25.9808 18 -25.9808 15 18 -25.9808 15 28 -15 25.9808 18 -25.9808 15 28 -15 25.9808 28 0 0 18 -25.9808 15 18 -15 25.9808 18 0 0 28 -15 25.9808 28 -25.9808 15 28 -25.9808 15 18 -30 3.67394e-15 18 -30 3.67394e-15 28 -25.9808 15 18 -30 3.67394e-15 28 -25.9808 15 28 0 0 18 -30 3.67394e-15 18 -25.9808 15 18 0 0 28 -25.9808 15 28 -30 3.67394e-15 28 -30 3.67394e-15 18 -25.9808 -15 18 -25.9808 -15 28 -30 3.67394e-15 18 -25.9808 -15 28 -30 3.67394e-15 28 0 0 18 -25.9808 -15 18 -30 3.67394e-15 18 0 0 28 -30 3.67394e-15 28 -25.9808 -15 28 -25.9808 -15 18 -15 -25.9808 18 -15 -25.9808 28 -25.9808 -15 18 -15 -25.9808 28 -25.9808 -15 28 0 0 18 -15 -25.9808 18 -25.9808 -15 18 0 0 28 -25.9808 -15 28 -15 -25.9808 28 -15 -25.9808 18 -5.51091e-15 -30 18 -5.51091e-15 -30 28 -15 -25.9808 18 -5.51091e-15 -30 28 -15 -25.9808 28 0 0 18 -5.51091e-15 -30 18 -15 -25.9808 18 0 0 28 -15 -25.9808 28 -5.51091e-15 -30 28 -5.51091e-15 -30 18 15 -25.9808 18 15 -25.9808 28 -5.51091e-15 -30 18 15 -25.9808 28 -5.51091e-15 -30 28 0 0 18 15 -25.9808 18 -5.51091e-15 -30 18 0 0 28 -5.51091e-15 -30 28 15 -25.9808 28 15 -25.9808 18 25.9808 -15 18 25.9808 -15 28 15 -25.9808 18 25.9808 -15 28 15 -25.9808 28 0 0 18 25.9808 -15 18 15 -25.9808 18 0 0 28 15 -25.9808 28 25.9808 -15 28 25.9808 -15 18 30 0 18 30 0 28 25.9808 -15 18 30 0 28 25.9808 -15 28 0 0 18 30 0 18 25.9808 -15 18 0 0 28 25.9808 -15 28 30 0 28</float_array>
+          <technique_common>
+            <accessor source="#Geom_mcap-positions-array" count="144" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_mcap-normals">
+          <float_array id="Geom_mcap-normals-array" count="144">0.965926 0.258819 0 0.965926 0.258819 -0 0 0 -1 0 0 1 0.707107 0.707107 0 0.707107 0.707107 -0 0 0 -1 0 0 1 0.258819 0.965926 0 0.258819 0.965926 -0 0 0 -1 0 0 1 -0.258819 0.965926 0 -0.258819 0.965926 0 0 0 -1 0 -0 1 -0.707107 0.707107 0 -0.707107 0.707107 0 0 0 -1 0 0 1 -0.965926 0.258819 0 -0.965926 0.258819 0 0 0 -1 0 0 1 -0.965926 -0.258819 0 -0.965926 -0.258819 0 -0 0 -1 0 0 1 -0.707107 -0.707107 0 -0.707107 -0.707107 0 0 0 -1 0 0 1 -0.258819 -0.965926 0 -0.258819 -0.965926 0 0 0 -1 0 0 1 0.258819 -0.965926 0 0.258819 -0.965926 0 0 -0 -1 0 0 1 0.707107 -0.707107 0 0.707107 -0.707107 0 0 0 -1 0 0 1 0.965926 -0.258819 0 0.965926 -0.258819 0 0 0 -1 -0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Geom_mcap-normals-array" count="48" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_mcap-texcoords">
+          <float_array id="Geom_mcap-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_mcap-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_mcap-vertices">
+          <input semantic="POSITION" source="#Geom_mcap-positions"/>
+        </vertices>
+        <triangles count="48" material="mcap">
+          <input semantic="VERTEX"   source="#Geom_mcap-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_mcap-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_mcap-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0 36 12 0 37 12 0 38 12 0 39 13 0 40 13 0 41 13 0 42 14 0 43 14 0 44 14 0 45 15 0 46 15 0 47 15 0 48 16 0 49 16 0 50 16 0 51 17 0 52 17 0 53 17 0 54 18 0 55 18 0 56 18 0 57 19 0 58 19 0 59 19 0 60 20 0 61 20 0 62 20 0 63 21 0 64 21 0 65 21 0 66 22 0 67 22 0 68 22 0 69 23 0 70 23 0 71 23 0 72 24 0 73 24 0 74 24 0 75 25 0 76 25 0 77 25 0 78 26 0 79 26 0 80 26 0 81 27 0 82 27 0 83 27 0 84 28 0 85 28 0 86 28 0 87 29 0 88 29 0 89 29 0 90 30 0 91 30 0 92 30 0 93 31 0 94 31 0 95 31 0 96 32 0 97 32 0 98 32 0 99 33 0 100 33 0 101 33 0 102 34 0 103 34 0 104 34 0 105 35 0 106 35 0 107 35 0 108 36 0 109 36 0 110 36 0 111 37 0 112 37 0 113 37 0 114 38 0 115 38 0 116 38 0 117 39 0 118 39 0 119 39 0 120 40 0 121 40 0 122 40 0 123 41 0 124 41 0 125 41 0 126 42 0 127 42 0 128 42 0 129 43 0 130 43 0 131 43 0 132 44 0 133 44 0 134 44 0 135 45 0 136 45 0 137 45 0 138 46 0 139 46 0 140 46 0 141 47 0 142 47 0 143 47 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Node_mstem" name="mstem" type="NODE">
+        <instance_geometry url="#Geom_mstem">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="mstem" target="#Mat_mstem">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_mcap" name="mcap" type="NODE">
+        <instance_geometry url="#Geom_mcap">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="mcap" target="#Mat_mcap">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

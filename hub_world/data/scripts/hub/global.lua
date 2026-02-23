@@ -114,17 +114,18 @@ local WEAPON_POWER = {
 }
 
 -- Door destinations: recordId → { cell, x, y, z, require_item }
+-- Garden doors are real DOOR records — engine teleports natively, no entry here.
+-- Positions are 60 % of the original design to match build.py cell layout.
 local DOOR_DESTINATIONS = {
-    hw_door_garden  = { cell="Hub Garden",  x=0,    y=-750, z=0 },
-    hw_door_forest  = { cell="Hub Forest",  x=0,    y=-1100,z=0,
+    hw_door_forest  = { cell="Hub Forest",  x=0,    y=-660, z=0,
                         require="hw_forest_pass",
                         locked_msg="You need a Forest Pass. Buy one from the vendor." },
-    hw_door_mine    = { cell="Hub Mine",    x=0,    y=700,  z=0,
+    hw_door_mine    = { cell="Hub Mine",    x=0,    y=420,  z=0,
                         require="hw_mine_pass",
                         locked_msg="You need a Mine Pass. Buy one from the vendor." },
-    hw_door_return_garden  = { cell="IdleMW", x=0,    y=1700, z=0 },
-    hw_door_return_forest  = { cell="IdleMW", x=1700, y=0,    z=0 },
-    hw_door_return_mine    = { cell="IdleMW", x=0,    y=-1700,z=0 },
+    -- Return destinations land in front of the respective outgoing door in IdleMW
+    hw_door_return_forest  = { cell="IdleMW", x=1020, y=0,    z=0 },
+    hw_door_return_mine    = { cell="IdleMW", x=0,    y=-1020,z=0 },
 }
 
 -- Anvil crafting recipes: { requires, consumes, produces, fail_consumes }

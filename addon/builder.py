@@ -257,10 +257,10 @@ class AddonBuilder:
             )
         subrecords.append(_raw_sr("NPDT", npdt))
         subrecords.append(_struct_sr("FLAG", "<I", ["flags"], {"flags": flag_val}))
-        # AIDT is 12 bytes: hello(B) unknown(B) fight(B) flee(B) alarm(B)
-        # unknown2(B) unknown3(B) unknown4(B) services(I)
+        # AIDT is 12 bytes: hello(B) fight(B) flee(B) alarm(B)
+        # u1(B) u2(B) u3(B) u4(B) services(I)
         aidt_raw = struct.pack("<BBBBBBBBI",
-                               30, 0, 30, 30, 0, 0, 0, 0, services)
+                               30, 30, 30, 0, 0, 0, 0, 0, services)
         subrecords.append(_raw_sr("AIDT", aidt_raw))
 
         for item_id, count in (inventory or []):

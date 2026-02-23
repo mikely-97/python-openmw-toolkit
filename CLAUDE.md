@@ -426,22 +426,35 @@ Register in `openmw.cfg` as: `content=mymod.omwscripts`
 local core = require('openmw.core')
 local self = require('openmw.self')   -- LOCAL/PLAYER only
 
-local function onInit(data)   end  -- first time only
-local function onSave()       return {} end
-local function onLoad(data)   end
-local function onUpdate(dt)   end  -- every frame
-local function onActivate(object, actor) end
+local function onInit(data)        end   -- first time only
+local function onSave()            return {} end
+local function onLoad(data)        end
+local function onUpdate(dt)        end   -- every frame
+
+-- LOCAL / CUSTOM scripts: called when THIS object is activated.
+-- The handler KEY must be "onActivated" (not "onActivate").
+local function onActivated(actor)  end
 
 return {
     engineHandlers = {
-        onInit = onInit,
-        onSave = onSave,
-        onLoad = onLoad,
-        onUpdate = onUpdate,
-        onActivate = onActivate,
+        onInit      = onInit,
+        onSave      = onSave,
+        onLoad      = onLoad,
+        onUpdate    = onUpdate,
+        onActivated = onActivated,   -- LOCAL only; GLOBAL scripts use eventHandlers
     }
 }
 ```
+
+**CRITICAL — activation handler names differ by script type:**
+
+| Script type | Handler key       | Signature              |
+|-------------|-------------------|------------------------|
+| LOCAL / CUSTOM (ACTI, NPC, etc.) | `onActivated` | `function(actor)` |
+| GLOBAL      | no built-in handler; receive via `sendGlobalEvent` + `eventHandlers` |
+
+Using `onActivate` (wrong spelling) in a LOCAL `engineHandlers` table silently
+does nothing — the engine never calls it, activations are silently ignored.
 
 ### Key API packages
 
@@ -775,10 +788,13 @@ These will crash OpenMW at load with a fatal ESM error; not just warnings:
   Using `<HBB6sI` (14 bytes) crashes with:
   `ESM Error: NPC_NPDT must be 12 or 52 bytes long`
 
-- **`NPC_/AIDT` must be exactly 12 bytes** — `struct.pack("<BBBBBBBBI", hello, unknown, fight, flee, alarm, u2, u3, u4, services)`.
-  That is: 8 individual uint8 fields + services(I=4) = 12.
+- **`NPC_/AIDT` must be exactly 12 bytes** — `struct.pack("<BBBBBBBBI", hello, fight, flee, alarm, u1, u2, u3, u4, services)`.
+  That is: hello(B) fight(B) flee(B) alarm(B) + 4 padding bytes + services(uint32 LE) = 12.
   Using `<BBBBI` (8 bytes) crashes with:
   `ESM Error: record size mismatch, requested 12, got 8 — Record: NPC_ Subrecord: AIDT`
+  The `tes3/schema.py` entry was previously wrong (`<BBBBI`, 8 bytes) which made
+  `omw-dump` show `services = 0` even when the correct value was in the binary.
+  Fixed to `<BBBBBBBBI` with fields `["hello", "fight", "flee", "alarm", "u1".."u4", "services"]`.
 
 - **`LIGH/LHDT` must be exactly 24 bytes** — `struct.pack("<fIiiBBBBI", weight, value, duration, radius, r, g, b, pad, flags)`.
   That is: weight(f=4) + value(I=4) + duration(i=4) + radius(i=4) + r/g/b(3×B) + pad(B=1) + flags(I=4) = 24.
@@ -787,6 +803,86 @@ These will crash OpenMW at load with a fatal ESM error; not just warnings:
 
 - **`openmw.async:newTimerInRealSeconds` is not available in GLOBAL scripts in OpenMW 0.50**.
   Use an `onUpdate` handler with a boolean flag instead of a timer for deferred actions.
+
+- **`SCPT` record subrecord layout (confirmed via template.omwgame dump)**:
+  - `SCHD` must be **52 bytes**: `struct.pack("<32sIIIII", name, num_shorts, num_longs, num_floats, script_data_size, local_var_size)`.
+    Using `"<32sIIII"` (48 bytes, missing `local_var_size`) crashes with an ESM size mismatch.
+  - `SCDT` (compiled bytecode) must be present even if empty (`b""`).  Omitting it
+    entirely crashes the loader.
+  - `SCTX` (source text) must be raw bytes **without** a null terminator.  Writing it
+    with `_str_sr` (which appends `\x00`) causes a parse error.
+
+- **Player spawn is controlled by the `EnableMenus` MWScript** (not `sStartCell` GMST
+  alone).  The game template runs this script at startup; it calls
+  `Player->PositionCell` to set the actual spawn location.  To redirect the player
+  to your own cell, define a `SCPT` record with `id="EnableMenus"` in your addon
+  (which loads last and overrides the template's version):
+  ```
+  Begin EnableMenus
+  EnableMagicMenu
+  EnableInventoryMenu
+  EnableMapMenu
+  EnableStatsMenu
+  EnableRest
+  set CharGenState to -1
+  Player->PositionCell 0, -300, 0, 0, "YourCellName"
+  stopscript EnableMenus
+  End EnableMenus
+  ```
+
+- **COLLADA materials must use `<blinn>` (not `<lambert>`)**.  OpenMW's COLLADA
+  loader requires `<blinn>` with `<emission>`, `<ambient>`, `<diffuse>`,
+  `<specular>`, and `<shininess>` to render flat-colour geometry correctly.
+  Using `<lambert>` (Blender's default Principled BSDF export) results in a solid
+  red fallback material.  Write `.dae` files directly in Python (see
+  `hub_world/generate_meshes.py`) to guarantee the correct format.
+
+- **COLLADA `<bind_vertex_input>` must use `semantic=`, not `symbol=`**.
+  The COLLADA 1.4.1 spec names the attribute `semantic`; using `symbol` is a
+  schema violation that causes the COLLADA DOM to emit a warning and then
+  **crash OpenMW with SIGSEGV** (signal 11, address nil) when loading the cell:
+  ```
+  Warning: The DOM was unable to create an attribute symbol = CHANNEL1
+  *** Fatal Error *** Address not mapped to object (signal 11) Address: (nil)
+  ```
+  Correct form inside `<instance_material>`:
+  ```xml
+  <instance_material symbol="floor" target="#Mat_floor">
+    <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+  </instance_material>
+  ```
+  Omitting `<bind_vertex_input>` entirely avoids the crash but loses UV-channel
+  mapping — OpenMW will log `Failed to find matching <bind_vertex_input> for CHANNEL1`
+  (non-fatal warning) and the diffuse texture falls back to solid red.
+
+- **COLLADA `<init_from>` paths are absolute VFS paths**, not relative to the DAE
+  file.  A DAE at `meshes/hub_world/foo.dae` with `<init_from>textures/hw_white.dds</init_from>`
+  will look up `textures/hw_white.dds` from the VFS root, i.e. it must exist at
+  `<DATA_DIR>/textures/hw_white.dds`.  A missing texture is logged as
+  `Failed to open image: Resource '…' not found` (non-fatal) but the diffuse slot
+  renders red.
+
+- **Rotating a STAT instance via `rot_z` does not rotate its UV mapping** — the
+  UV coords live in the mesh, not in the instance transform.  If you rotate a wall
+  mesh 90° to make it face a different direction, the same UV source is used with
+  the rotated geometry, which can produce unexpected UV-binding failures on some
+  faces.  The safe pattern is to generate separate pre-oriented meshes (e.g.
+  `wall_hub.dae` long in X for N/S walls, `wall_hub_ew.dae` long in Y for E/W
+  walls) and place them with **no rotation**.
+
+- **NPC meshes in the game template must use the skeleton from `basicplayer.dae`**.
+  Setting `mesh=` on an NPC_ to a custom COLLADA DAE that has no skeleton
+  bindings causes OpenMW to collapse all geometry nodes to the world origin,
+  producing a blob (often described as a "mushroom") with no valid click
+  collision — the NPC becomes unclickable.  The reliable pattern for a custom
+  interactive object is: a **STAT** for the visual (renders correctly as a static
+  mesh) plus an **NPC** with `mesh="basicplayer.dae"` placed just in front of it.
+  The player clicks the NPC to open barter/dialogue.
+
+- **Dialogue text strings must be latin-1 encodable** (no Unicode beyond 0xFF).
+  Em dashes (U+2014, `—`), curly quotes, and other non-ASCII Unicode characters
+  will raise `UnicodeEncodeError` at build time.  Use ASCII approximations:
+  ` - ` instead of ` — `, `"` instead of `"`, etc.
 
 ### Known non-fatal example suite warnings
 

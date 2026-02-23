@@ -223,7 +223,7 @@ _S["CREA", "FNAM"] = StringSchema()
 _S["CREA", "SCRI"] = StringSchema()
 _S["CREA", "NPCS"] = StringSchema()
 # NPDT for creatures is 96 bytes
-_S["CREA", "AIDT"] = SubrecordSchema("<BBBBI", ["hello", "unknown", "fight", "flee", "services"])
+_S["CREA", "AIDT"] = SubrecordSchema("<BBBBBBBBI", ["hello", "fight", "flee", "alarm", "u1", "u2", "u3", "u4", "services"])
 _S["CREA", "NPCO"] = SubrecordSchema("<i32s", ["count", "item_id"])
 _S["CREA", "DODT"] = SubrecordSchema("<ffffff", ["x", "y", "z", "rot_x", "rot_y", "rot_z"])
 _S["CREA", "DNAM"] = StringSchema()  # destination cell name
@@ -266,7 +266,7 @@ _S["NPC_", "NPDT"] = None             # variable-size; 52 or 12 bytes
 _S["NPC_", "FLAG"] = SubrecordSchema("<I", ["flags"])
 _S["NPC_", "NPCO"] = SubrecordSchema("<i32s", ["count", "item_id"])
 _S["NPC_", "NPCS"] = StringSchema()   # spell ID (32 bytes, null-padded)
-_S["NPC_", "AIDT"] = SubrecordSchema("<BBBBI", ["hello", "unknown", "fight", "flee", "services"])
+_S["NPC_", "AIDT"] = SubrecordSchema("<BBBBBBBBI", ["hello", "fight", "flee", "alarm", "u1", "u2", "u3", "u4", "services"])
 _S["NPC_", "DODT"] = SubrecordSchema("<ffffff", ["x", "y", "z", "rot_x", "rot_y", "rot_z"])
 _S["NPC_", "DNAM"] = StringSchema()   # destination cell name
 _S["NPC_", "XSCL"] = SubrecordSchema("<f", ["scale"])

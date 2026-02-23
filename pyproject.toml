@@ -19,6 +19,8 @@ pytest = "^8.0"
 omw-dump = "tools.dump:main"
 omw-validate = "tools.validate:main"
 omw-diff = "tools.diff:main"
+omw-to-db = "tools.to_db:main"
+omw-from-db = "tools.from_db:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-01-01</created>
+    <modified>2026-01-01</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="img_textures_hw_white_dds" name="img_textures_hw_white_dds">
+      <init_from>textures/hw_white.dds</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="Effect_frame_gray">
+      <profile_COMMON>
+        <newparam sid="surf_frame_gray">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_frame_gray">
+          <sampler2D>
+            <source>surf_frame_gray</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.45 0.45 0.48 1</color></ambient>
+            <diffuse><texture texture="samp_frame_gray" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_framer_gray">
+      <profile_COMMON>
+        <newparam sid="surf_framer_gray">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_framer_gray">
+          <sampler2D>
+            <source>surf_framer_gray</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.45 0.45 0.48 1</color></ambient>
+            <diffuse><texture texture="samp_framer_gray" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_lintel_gray">
+      <profile_COMMON>
+        <newparam sid="surf_lintel_gray">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_lintel_gray">
+          <sampler2D>
+            <source>surf_lintel_gray</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.45 0.45 0.48 1</color></ambient>
+            <diffuse><texture texture="samp_lintel_gray" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_panel_gray">
+      <profile_COMMON>
+        <newparam sid="surf_panel_gray">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_panel_gray">
+          <sampler2D>
+            <source>surf_panel_gray</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.315 0.315 0.336 1</color></ambient>
+            <diffuse><texture texture="samp_panel_gray" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Mat_frame_gray" name="frame_gray">
+      <instance_effect url="#Effect_frame_gray"/>
+    </material>
+    <material id="Mat_framer_gray" name="framer_gray">
+      <instance_effect url="#Effect_framer_gray"/>
+    </material>
+    <material id="Mat_lintel_gray" name="lintel_gray">
+      <instance_effect url="#Effect_lintel_gray"/>
+    </material>
+    <material id="Mat_panel_gray" name="panel_gray">
+      <instance_effect url="#Effect_panel_gray"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Geom_frame_gray" name="frame_gray">
+      <mesh>
+        <source id="Geom_frame_gray-positions">
+          <float_array id="Geom_frame_gray-positions-array" count="108">-4 3 0 4 3 0 4 -3 0 -4 3 0 4 -3 0 -4 -3 0 -4 -3 150 4 -3 150 4 3 150 -4 -3 150 4 3 150 -4 3 150 -4 -3 0 4 -3 0 4 -3 150 -4 -3 0 4 -3 150 -4 -3 150 4 3 0 -4 3 0 -4 3 150 4 3 0 -4 3 150 4 3 150 -4 -3 0 -4 -3 150 -4 3 150 -4 -3 0 -4 3 150 -4 3 0 4 3 0 4 3 150 4 -3 150 4 3 0 4 -3 150 4 -3 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_frame_gray-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_frame_gray-normals">
+          <float_array id="Geom_frame_gray-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_frame_gray-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_frame_gray-texcoords">
+          <float_array id="Geom_frame_gray-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_frame_gray-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_frame_gray-vertices">
+          <input semantic="POSITION" source="#Geom_frame_gray-positions"/>
+        </vertices>
+        <triangles count="12" material="frame_gray">
+          <input semantic="VERTEX"   source="#Geom_frame_gray-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_frame_gray-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_frame_gray-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_framer_gray" name="framer_gray">
+      <mesh>
+        <source id="Geom_framer_gray-positions">
+          <float_array id="Geom_framer_gray-positions-array" count="108">68 3 0 76 3 0 76 -3 0 68 3 0 76 -3 0 68 -3 0 68 -3 150 76 -3 150 76 3 150 68 -3 150 76 3 150 68 3 150 68 -3 0 76 -3 0 76 -3 150 68 -3 0 76 -3 150 68 -3 150 76 3 0 68 3 0 68 3 150 76 3 0 68 3 150 76 3 150 68 -3 0 68 -3 150 68 3 150 68 -3 0 68 3 150 68 3 0 76 3 0 76 3 150 76 -3 150 76 3 0 76 -3 150 76 -3 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_framer_gray-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_framer_gray-normals">
+          <float_array id="Geom_framer_gray-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_framer_gray-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_framer_gray-texcoords">
+          <float_array id="Geom_framer_gray-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_framer_gray-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_framer_gray-vertices">
+          <input semantic="POSITION" source="#Geom_framer_gray-positions"/>
+        </vertices>
+        <triangles count="12" material="framer_gray">
+          <input semantic="VERTEX"   source="#Geom_framer_gray-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_framer_gray-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_framer_gray-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_lintel_gray" name="lintel_gray">
+      <mesh>
+        <source id="Geom_lintel_gray-positions">
+          <float_array id="Geom_lintel_gray-positions-array" count="108">-44 3 140 44 3 140 44 -3 140 -44 3 140 44 -3 140 -44 -3 140 -44 -3 150 44 -3 150 44 3 150 -44 -3 150 44 3 150 -44 3 150 -44 -3 140 44 -3 140 44 -3 150 -44 -3 140 44 -3 150 -44 -3 150 44 3 140 -44 3 140 -44 3 150 44 3 140 -44 3 150 44 3 150 -44 -3 140 -44 -3 150 -44 3 150 -44 -3 140 -44 3 150 -44 3 140 44 3 140 44 3 150 44 -3 150 44 3 140 44 -3 150 44 -3 140</float_array>
+          <technique_common>
+            <accessor source="#Geom_lintel_gray-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_lintel_gray-normals">
+          <float_array id="Geom_lintel_gray-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_lintel_gray-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_lintel_gray-texcoords">
+          <float_array id="Geom_lintel_gray-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_lintel_gray-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_lintel_gray-vertices">
+          <input semantic="POSITION" source="#Geom_lintel_gray-positions"/>
+        </vertices>
+        <triangles count="12" material="lintel_gray">
+          <input semantic="VERTEX"   source="#Geom_lintel_gray-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_lintel_gray-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_lintel_gray-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_panel_gray" name="panel_gray">
+      <mesh>
+        <source id="Geom_panel_gray-positions">
+          <float_array id="Geom_panel_gray-positions-array" count="108">-28 2 0 44 2 0 44 -2 0 -28 2 0 44 -2 0 -28 -2 0 -28 -2 140 44 -2 140 44 2 140 -28 -2 140 44 2 140 -28 2 140 -28 -2 0 44 -2 0 44 -2 140 -28 -2 0 44 -2 140 -28 -2 140 44 2 0 -28 2 0 -28 2 140 44 2 0 -28 2 140 44 2 140 -28 -2 0 -28 -2 140 -28 2 140 -28 -2 0 -28 2 140 -28 2 0 44 2 0 44 2 140 44 -2 140 44 2 0 44 -2 140 44 -2 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_panel_gray-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_panel_gray-normals">
+          <float_array id="Geom_panel_gray-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_panel_gray-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_panel_gray-texcoords">
+          <float_array id="Geom_panel_gray-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_panel_gray-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_panel_gray-vertices">
+          <input semantic="POSITION" source="#Geom_panel_gray-positions"/>
+        </vertices>
+        <triangles count="12" material="panel_gray">
+          <input semantic="VERTEX"   source="#Geom_panel_gray-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_panel_gray-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_panel_gray-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Node_frame_gray" name="frame_gray" type="NODE">
+        <instance_geometry url="#Geom_frame_gray">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="frame_gray" target="#Mat_frame_gray">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_framer_gray" name="framer_gray" type="NODE">
+        <instance_geometry url="#Geom_framer_gray">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="framer_gray" target="#Mat_framer_gray">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_lintel_gray" name="lintel_gray" type="NODE">
+        <instance_geometry url="#Geom_lintel_gray">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="lintel_gray" target="#Mat_lintel_gray">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_panel_gray" name="panel_gray" type="NODE">
+        <instance_geometry url="#Geom_panel_gray">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="panel_gray" target="#Mat_panel_gray">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

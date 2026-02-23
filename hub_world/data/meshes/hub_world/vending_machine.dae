@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-01-01</created>
+    <modified>2026-01-01</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="img_textures_hw_white_dds" name="img_textures_hw_white_dds">
+      <init_from>textures/hw_white.dds</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="Effect_vm_body">
+      <profile_COMMON>
+        <newparam sid="surf_vm_body">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_vm_body">
+          <sampler2D>
+            <source>surf_vm_body</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.15 0.18 0.28 1</color></ambient>
+            <diffuse><texture texture="samp_vm_body" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_vm_panel">
+      <profile_COMMON>
+        <newparam sid="surf_vm_panel">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_vm_panel">
+          <sampler2D>
+            <source>surf_vm_panel</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.35 0.55 0.8 1</color></ambient>
+            <diffuse><texture texture="samp_vm_panel" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_vm_logo">
+      <profile_COMMON>
+        <newparam sid="surf_vm_logo">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_vm_logo">
+          <sampler2D>
+            <source>surf_vm_logo</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.9 0.55 0.05 1</color></ambient>
+            <diffuse><texture texture="samp_vm_logo" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_vm_buttons">
+      <profile_COMMON>
+        <newparam sid="surf_vm_buttons">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_vm_buttons">
+          <sampler2D>
+            <source>surf_vm_buttons</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.8 0.15 0.1 1</color></ambient>
+            <diffuse><texture texture="samp_vm_buttons" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_vm_tray">
+      <profile_COMMON>
+        <newparam sid="surf_vm_tray">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_vm_tray">
+          <sampler2D>
+            <source>surf_vm_tray</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.22 0.22 0.3 1</color></ambient>
+            <diffuse><texture texture="samp_vm_tray" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_vm_strip_l">
+      <profile_COMMON>
+        <newparam sid="surf_vm_strip_l">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_vm_strip_l">
+          <sampler2D>
+            <source>surf_vm_strip_l</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.25 0.28 0.42 1</color></ambient>
+            <diffuse><texture texture="samp_vm_strip_l" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="Effect_vm_strip_r">
+      <profile_COMMON>
+        <newparam sid="surf_vm_strip_r">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_vm_strip_r">
+          <sampler2D>
+            <source>surf_vm_strip_r</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.25 0.28 0.42 1</color></ambient>
+            <diffuse><texture texture="samp_vm_strip_r" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Mat_vm_body" name="vm_body">
+      <instance_effect url="#Effect_vm_body"/>
+    </material>
+    <material id="Mat_vm_panel" name="vm_panel">
+      <instance_effect url="#Effect_vm_panel"/>
+    </material>
+    <material id="Mat_vm_logo" name="vm_logo">
+      <instance_effect url="#Effect_vm_logo"/>
+    </material>
+    <material id="Mat_vm_buttons" name="vm_buttons">
+      <instance_effect url="#Effect_vm_buttons"/>
+    </material>
+    <material id="Mat_vm_tray" name="vm_tray">
+      <instance_effect url="#Effect_vm_tray"/>
+    </material>
+    <material id="Mat_vm_strip_l" name="vm_strip_l">
+      <instance_effect url="#Effect_vm_strip_l"/>
+    </material>
+    <material id="Mat_vm_strip_r" name="vm_strip_r">
+      <instance_effect url="#Effect_vm_strip_r"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Geom_vm_body" name="vm_body">
+      <mesh>
+        <source id="Geom_vm_body-positions">
+          <float_array id="Geom_vm_body-positions-array" count="108">-40 25 0 40 25 0 40 -25 0 -40 25 0 40 -25 0 -40 -25 0 -40 -25 200 40 -25 200 40 25 200 -40 -25 200 40 25 200 -40 25 200 -40 -25 0 40 -25 0 40 -25 200 -40 -25 0 40 -25 200 -40 -25 200 40 25 0 -40 25 0 -40 25 200 40 25 0 -40 25 200 40 25 200 -40 -25 0 -40 -25 200 -40 25 200 -40 -25 0 -40 25 200 -40 25 0 40 25 0 40 25 200 40 -25 200 40 25 0 40 -25 200 40 -25 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_body-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_body-normals">
+          <float_array id="Geom_vm_body-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_body-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_body-texcoords">
+          <float_array id="Geom_vm_body-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_body-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_vm_body-vertices">
+          <input semantic="POSITION" source="#Geom_vm_body-positions"/>
+        </vertices>
+        <triangles count="12" material="vm_body">
+          <input semantic="VERTEX"   source="#Geom_vm_body-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_vm_body-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_vm_body-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_vm_panel" name="vm_panel">
+      <mesh>
+        <source id="Geom_vm_panel-positions">
+          <float_array id="Geom_vm_panel-positions-array" count="108">-31 -25 55 31 -25 55 31 -33 55 -31 -25 55 31 -33 55 -31 -33 55 -31 -33 145 31 -33 145 31 -25 145 -31 -33 145 31 -25 145 -31 -25 145 -31 -33 55 31 -33 55 31 -33 145 -31 -33 55 31 -33 145 -31 -33 145 31 -25 55 -31 -25 55 -31 -25 145 31 -25 55 -31 -25 145 31 -25 145 -31 -33 55 -31 -33 145 -31 -25 145 -31 -33 55 -31 -25 145 -31 -25 55 31 -25 55 31 -25 145 31 -33 145 31 -25 55 31 -33 145 31 -33 55</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_panel-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_panel-normals">
+          <float_array id="Geom_vm_panel-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_panel-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_panel-texcoords">
+          <float_array id="Geom_vm_panel-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_panel-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_vm_panel-vertices">
+          <input semantic="POSITION" source="#Geom_vm_panel-positions"/>
+        </vertices>
+        <triangles count="12" material="vm_panel">
+          <input semantic="VERTEX"   source="#Geom_vm_panel-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_vm_panel-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_vm_panel-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_vm_logo" name="vm_logo">
+      <mesh>
+        <source id="Geom_vm_logo-positions">
+          <float_array id="Geom_vm_logo-positions-array" count="108">-35 -25 165 35 -25 165 35 -31 165 -35 -25 165 35 -31 165 -35 -31 165 -35 -31 187 35 -31 187 35 -25 187 -35 -31 187 35 -25 187 -35 -25 187 -35 -31 165 35 -31 165 35 -31 187 -35 -31 165 35 -31 187 -35 -31 187 35 -25 165 -35 -25 165 -35 -25 187 35 -25 165 -35 -25 187 35 -25 187 -35 -31 165 -35 -31 187 -35 -25 187 -35 -31 165 -35 -25 187 -35 -25 165 35 -25 165 35 -25 187 35 -31 187 35 -25 165 35 -31 187 35 -31 165</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_logo-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_logo-normals">
+          <float_array id="Geom_vm_logo-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_logo-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_logo-texcoords">
+          <float_array id="Geom_vm_logo-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_logo-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_vm_logo-vertices">
+          <input semantic="POSITION" source="#Geom_vm_logo-positions"/>
+        </vertices>
+        <triangles count="12" material="vm_logo">
+          <input semantic="VERTEX"   source="#Geom_vm_logo-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_vm_logo-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_vm_logo-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_vm_buttons" name="vm_buttons">
+      <mesh>
+        <source id="Geom_vm_buttons-positions">
+          <float_array id="Geom_vm_buttons-positions-array" count="108">-27.5 -25.5 148 27.5 -25.5 148 27.5 -30.5 148 -27.5 -25.5 148 27.5 -30.5 148 -27.5 -30.5 148 -27.5 -30.5 166 27.5 -30.5 166 27.5 -25.5 166 -27.5 -30.5 166 27.5 -25.5 166 -27.5 -25.5 166 -27.5 -30.5 148 27.5 -30.5 148 27.5 -30.5 166 -27.5 -30.5 148 27.5 -30.5 166 -27.5 -30.5 166 27.5 -25.5 148 -27.5 -25.5 148 -27.5 -25.5 166 27.5 -25.5 148 -27.5 -25.5 166 27.5 -25.5 166 -27.5 -30.5 148 -27.5 -30.5 166 -27.5 -25.5 166 -27.5 -30.5 148 -27.5 -25.5 166 -27.5 -25.5 148 27.5 -25.5 148 27.5 -25.5 166 27.5 -30.5 166 27.5 -25.5 148 27.5 -30.5 166 27.5 -30.5 148</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_buttons-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_buttons-normals">
+          <float_array id="Geom_vm_buttons-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_buttons-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_buttons-texcoords">
+          <float_array id="Geom_vm_buttons-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_buttons-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_vm_buttons-vertices">
+          <input semantic="POSITION" source="#Geom_vm_buttons-positions"/>
+        </vertices>
+        <triangles count="12" material="vm_buttons">
+          <input semantic="VERTEX"   source="#Geom_vm_buttons-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_vm_buttons-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_vm_buttons-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_vm_tray" name="vm_tray">
+      <mesh>
+        <source id="Geom_vm_tray-positions">
+          <float_array id="Geom_vm_tray-positions-array" count="108">-30 -25 5 30 -25 5 30 -39 5 -30 -25 5 30 -39 5 -30 -39 5 -30 -39 19 30 -39 19 30 -25 19 -30 -39 19 30 -25 19 -30 -25 19 -30 -39 5 30 -39 5 30 -39 19 -30 -39 5 30 -39 19 -30 -39 19 30 -25 5 -30 -25 5 -30 -25 19 30 -25 5 -30 -25 19 30 -25 19 -30 -39 5 -30 -39 19 -30 -25 19 -30 -39 5 -30 -25 19 -30 -25 5 30 -25 5 30 -25 19 30 -39 19 30 -25 5 30 -39 19 30 -39 5</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_tray-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_tray-normals">
+          <float_array id="Geom_vm_tray-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_tray-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_tray-texcoords">
+          <float_array id="Geom_vm_tray-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_tray-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_vm_tray-vertices">
+          <input semantic="POSITION" source="#Geom_vm_tray-positions"/>
+        </vertices>
+        <triangles count="12" material="vm_tray">
+          <input semantic="VERTEX"   source="#Geom_vm_tray-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_vm_tray-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_vm_tray-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_vm_strip_l" name="vm_strip_l">
+      <mesh>
+        <source id="Geom_vm_strip_l-positions">
+          <float_array id="Geom_vm_strip_l-positions-array" count="108">-42 25 0 -38 25 0 -38 -25 0 -42 25 0 -38 -25 0 -42 -25 0 -42 -25 200 -38 -25 200 -38 25 200 -42 -25 200 -38 25 200 -42 25 200 -42 -25 0 -38 -25 0 -38 -25 200 -42 -25 0 -38 -25 200 -42 -25 200 -38 25 0 -42 25 0 -42 25 200 -38 25 0 -42 25 200 -38 25 200 -42 -25 0 -42 -25 200 -42 25 200 -42 -25 0 -42 25 200 -42 25 0 -38 25 0 -38 25 200 -38 -25 200 -38 25 0 -38 -25 200 -38 -25 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_strip_l-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_strip_l-normals">
+          <float_array id="Geom_vm_strip_l-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_strip_l-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_strip_l-texcoords">
+          <float_array id="Geom_vm_strip_l-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_strip_l-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_vm_strip_l-vertices">
+          <input semantic="POSITION" source="#Geom_vm_strip_l-positions"/>
+        </vertices>
+        <triangles count="12" material="vm_strip_l">
+          <input semantic="VERTEX"   source="#Geom_vm_strip_l-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_vm_strip_l-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_vm_strip_l-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="Geom_vm_strip_r" name="vm_strip_r">
+      <mesh>
+        <source id="Geom_vm_strip_r-positions">
+          <float_array id="Geom_vm_strip_r-positions-array" count="108">34 25 0 38 25 0 38 -25 0 34 25 0 38 -25 0 34 -25 0 34 -25 200 38 -25 200 38 25 200 34 -25 200 38 25 200 34 25 200 34 -25 0 38 -25 0 38 -25 200 34 -25 0 38 -25 200 34 -25 200 38 25 0 34 25 0 34 25 200 38 25 0 34 25 200 38 25 200 34 -25 0 34 -25 200 34 25 200 34 -25 0 34 25 200 34 25 0 38 25 0 38 25 200 38 -25 200 38 25 0 38 -25 200 38 -25 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_strip_r-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_strip_r-normals">
+          <float_array id="Geom_vm_strip_r-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_strip_r-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_vm_strip_r-texcoords">
+          <float_array id="Geom_vm_strip_r-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_vm_strip_r-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_vm_strip_r-vertices">
+          <input semantic="POSITION" source="#Geom_vm_strip_r-positions"/>
+        </vertices>
+        <triangles count="12" material="vm_strip_r">
+          <input semantic="VERTEX"   source="#Geom_vm_strip_r-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_vm_strip_r-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_vm_strip_r-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Node_vm_body" name="vm_body" type="NODE">
+        <instance_geometry url="#Geom_vm_body">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="vm_body" target="#Mat_vm_body">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_vm_panel" name="vm_panel" type="NODE">
+        <instance_geometry url="#Geom_vm_panel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="vm_panel" target="#Mat_vm_panel">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_vm_logo" name="vm_logo" type="NODE">
+        <instance_geometry url="#Geom_vm_logo">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="vm_logo" target="#Mat_vm_logo">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_vm_buttons" name="vm_buttons" type="NODE">
+        <instance_geometry url="#Geom_vm_buttons">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="vm_buttons" target="#Mat_vm_buttons">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_vm_tray" name="vm_tray" type="NODE">
+        <instance_geometry url="#Geom_vm_tray">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="vm_tray" target="#Mat_vm_tray">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_vm_strip_l" name="vm_strip_l" type="NODE">
+        <instance_geometry url="#Geom_vm_strip_l">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="vm_strip_l" target="#Mat_vm_strip_l">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Node_vm_strip_r" name="vm_strip_r" type="NODE">
+        <instance_geometry url="#Geom_vm_strip_r">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="vm_strip_r" target="#Mat_vm_strip_r">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

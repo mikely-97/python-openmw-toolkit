@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-01-01</created>
+    <modified>2026-01-01</modified>
+    <unit name="centimeter" meter="0.01"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="img_textures_hw_white_dds" name="img_textures_hw_white_dds">
+      <init_from>textures/hw_white.dds</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="Effect_ingot">
+      <profile_COMMON>
+        <newparam sid="surf_ingot">
+          <surface type="2D">
+            <init_from>img_textures_hw_white_dds</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="samp_ingot">
+          <sampler2D>
+            <source>surf_ingot</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission><color sid="emission">0 0 0 1</color></emission>
+            <ambient><color sid="ambient">0.6 0.6 0.65 1</color></ambient>
+            <diffuse><texture texture="samp_ingot" texcoord="CHANNEL1"/></diffuse>
+            <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
+            <shininess><float sid="shininess">20</float></shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Mat_ingot" name="ingot">
+      <instance_effect url="#Effect_ingot"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Geom_ingot" name="ingot">
+      <mesh>
+        <source id="Geom_ingot-positions">
+          <float_array id="Geom_ingot-positions-array" count="108">-10 4 0 10 4 0 10 -4 0 -10 4 0 10 -4 0 -10 -4 0 -10 -4 5 10 -4 5 10 4 5 -10 -4 5 10 4 5 -10 4 5 -10 -4 0 10 -4 0 10 -4 5 -10 -4 0 10 -4 5 -10 -4 5 10 4 0 -10 4 0 -10 4 5 10 4 0 -10 4 5 10 4 5 -10 -4 0 -10 -4 5 -10 4 5 -10 -4 0 -10 4 5 -10 4 0 10 4 0 10 4 5 10 -4 5 10 4 0 10 -4 5 10 -4 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_ingot-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_ingot-normals">
+          <float_array id="Geom_ingot-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_ingot-normals-array" count="12" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Geom_ingot-texcoords">
+          <float_array id="Geom_ingot-texcoords-array" count="2">0 0</float_array>
+          <technique_common>
+            <accessor source="#Geom_ingot-texcoords-array" count="1" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Geom_ingot-vertices">
+          <input semantic="POSITION" source="#Geom_ingot-positions"/>
+        </vertices>
+        <triangles count="12" material="ingot">
+          <input semantic="VERTEX"   source="#Geom_ingot-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_ingot-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_ingot-texcoords" offset="2" set="0"/>
+          <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Node_ingot" name="ingot" type="NODE">
+        <instance_geometry url="#Geom_ingot">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="ingot" target="#Mat_ingot">
+                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>
