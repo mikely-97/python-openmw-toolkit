@@ -58,7 +58,7 @@ local function onActivate(actor)
 
     core.sendGlobalEvent("HW_Activate", {
         recordId = rid,
-        objectId = tostring(self_m.object.id),  -- unique instance identifier
+        objectId = rid,   -- each activator has a unique recordId; .id is nil in 0.50
         actor    = actor,
     })
 end

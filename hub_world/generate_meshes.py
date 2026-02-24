@@ -730,6 +730,11 @@ MESHES = [
     # E/W walls: long in Y, placed with no rotation — avoids COLLADA UV-binding issue
     ("wall_hub_ew.dae",   build_wall_ew, {"name":"wall_hub_ew",   "sy":2640,"sz":500,"r":0.38,"g":0.38,"b":0.40}, {"texture_vfs": _BRICK_DDS_VFS, "tile_size": 128.0}),
     ("wall_small_ew.dae", build_wall_ew, {"name":"wall_small_ew", "sy":1320,"sz":500,"r":0.38,"g":0.38,"b":0.40}, {"texture_vfs": _BRICK_DDS_VFS, "tile_size": 128.0}),
+    # Forest walls (1800 GU) — N/S long in X, E/W long in Y
+    ("wall_forest.dae",    build_wall,    {"name":"wall_forest",    "sx":1800,"sz":500,"r":0.38,"g":0.38,"b":0.40}, {"texture_vfs": _BRICK_DDS_VFS, "tile_size": 128.0}),
+    ("wall_forest_ew.dae", build_wall_ew, {"name":"wall_forest_ew", "sy":1800,"sz":500,"r":0.38,"g":0.38,"b":0.40}, {"texture_vfs": _BRICK_DDS_VFS, "tile_size": 128.0}),
+    # Mine E/W wall (1080 GU long in Y — mine floor is 1320×1080)
+    ("wall_mine_ew.dae",   build_wall_ew, {"name":"wall_mine_ew",   "sy":1080,"sz":500,"r":0.38,"g":0.38,"b":0.40}, {"texture_vfs": _BRICK_DDS_VFS, "tile_size": 128.0}),
     # Weapons
     ("axe_wooden.dae",   build_axe,     {"name":"axe_wooden", "r_h":0.50,"g_h":0.35,"b_h":0.15,"r_b":0.70,"g_b":0.60,"b_b":0.40}),
     ("axe_iron.dae",     build_axe,     {"name":"axe_iron",   "r_h":0.45,"g_h":0.30,"b_h":0.10,"r_b":0.55,"g_b":0.55,"b_b":0.60}),

@@ -329,8 +329,16 @@ addon.add_static("hw_wall_hub",        mesh=mesh("wall_hub"))
 addon.add_static("hw_wall_small",      mesh=mesh("wall_small"))
 addon.add_static("hw_wall_hub_ew",     mesh=mesh("wall_hub_ew"))
 addon.add_static("hw_wall_small_ew",   mesh=mesh("wall_small_ew"))
-# Vending machine chassis — purely decorative STAT
-addon.add_static("hw_vending_machine", mesh=mesh("vending_machine"))
+# Forest walls (1800 GU)
+addon.add_static("hw_wall_forest",     mesh=mesh("wall_forest"))
+addon.add_static("hw_wall_forest_ew",  mesh=mesh("wall_forest_ew"))
+# Mine E/W wall (1080 GU)
+addon.add_static("hw_wall_mine_ew",    mesh=mesh("wall_mine_ew"))
+# Vending machine — interactive ACTI; MWScript opens vendor dialogue on click
+addon.add_activator("hw_vending_machine",
+    name="The Vending Machine",
+    mesh=mesh("vending_machine"),
+    script="hw_vendor_script")
 
 
 # ===========================================================================
@@ -393,6 +401,24 @@ addon.add_dialogue_topic(
                 "ore deposits if they run dry.",
         "speaker_id": "hw_vendor",
     }],
+)
+
+# ===========================================================================
+# MWSCRIPT — vending machine opens vendor dialogue when activated
+# ===========================================================================
+# The player clicks the ACTI mesh → script calls ForceGreeting on the
+# invisible hw_vendor NPC (same cell) → full dialogue + barter window opens.
+addon.add_script(
+    id="hw_vendor_script",
+    source=(
+        "Begin hw_vendor_script\n"
+        "\n"
+        "if ( OnActivate == 1 )\n"
+        "    hw_vendor->ForceGreeting\n"
+        "endif\n"
+        "\n"
+        "End hw_vendor_script\n"
+    ),
 )
 
 # ===========================================================================
@@ -463,13 +489,11 @@ for px, py in [(-900, 900), (900, 900), (900, -900), (-900, -900)]:
 for lx, ly in [(-780, 780), (780, 780), (780, -780), (-780, -780)]:
     hub.place_light("hw_light_fill", x=lx, y=ly, z=200)
 
-# Vending machine: STAT provides the visual, NPC sits just in front so it is
-# clickable.  NPCs in the game template require basicplayer.dae for the
-# skeleton — custom meshes without skeleton bindings render as collapsed blobs.
-hub.place_static("hw_vending_machine", x=0, y=80, z=0)
-# NPC is invisible (no mesh) but actor-capsule collision makes it clickable.
-# Placed at the same position as the STAT so cursor over the machine hits the NPC.
-hub.place_npc("hw_vendor", x=0, y=80, z=0, rotation=3.14159)
+# Vending machine: interactive ACTI (clickable mesh) + invisible NPC in same cell.
+# Player clicks the machine → MWScript calls hw_vendor->ForceGreeting → barter opens.
+hub.place_activator("hw_vending_machine", x=0, y=80, z=0)
+# NPC is invisible (no mesh); only used as a ForceGreeting target for barter.
+hub.place_npc("hw_vendor", x=0, y=80, z=100, rotation=3.14159)
 
 # Bed — SE alcove
 hub.place_activator("hw_bed", x=420, y=-360, z=0)
@@ -504,7 +528,15 @@ garden = addon.add_interior_cell(
     fog_density=0.05,
 )
 
-garden.place_static("hw_floor_garden", x=0, y=0, z=-10)
+garden.place_static("hw_floor_garden", x=0, y=0, z=-10)   # floor
+garden.place_static("hw_floor_garden", x=0, y=0, z=490)   # ceiling
+# Walls — floor is 1320×1320 so boundaries at ±660
+# N/S walls: hw_wall_small (sx=1320), long in X, no rotation
+garden.place_static("hw_wall_small",    x=0,    y=660,  z=0)   # north
+garden.place_static("hw_wall_small",    x=0,    y=-660, z=0)   # south
+# E/W walls: hw_wall_small_ew (sy=1320), long in Y, no rotation
+garden.place_static("hw_wall_small_ew", x=660,  y=0,    z=0)   # east
+garden.place_static("hw_wall_small_ew", x=-660, y=0,    z=0)   # west
 garden.place_light("hw_light_garden",  x=0,    y=0,    z=400)
 garden.place_light("hw_light_garden",  x=-360, y=-240, z=300)
 garden.place_light("hw_light_garden",  x=300,  y=240,  z=300)
@@ -534,7 +566,15 @@ forest = addon.add_interior_cell(
     fog_density=0.08,
 )
 
-forest.place_static("hw_floor_forest", x=0, y=0, z=-10)
+forest.place_static("hw_floor_forest", x=0, y=0, z=-10)   # floor
+forest.place_static("hw_floor_forest", x=0, y=0, z=490)   # ceiling
+# Walls — floor is 1800×1800 so boundaries at ±900
+# N/S walls: hw_wall_forest (sx=1800), long in X, no rotation
+forest.place_static("hw_wall_forest",    x=0,    y=900,  z=0)   # north
+forest.place_static("hw_wall_forest",    x=0,    y=-900, z=0)   # south
+# E/W walls: hw_wall_forest_ew (sy=1800), long in Y, no rotation
+forest.place_static("hw_wall_forest_ew", x=900,  y=0,    z=0)   # east
+forest.place_static("hw_wall_forest_ew", x=-900, y=0,    z=0)   # west
 forest.place_light("hw_light_forest",  x=0,    y=0,    z=500)
 forest.place_light("hw_light_forest",  x=-480, y=-360, z=400)
 forest.place_light("hw_light_forest",  x=420,  y=420,  z=400)
@@ -570,7 +610,15 @@ mine = addon.add_interior_cell(
     fog_density=0.15,
 )
 
-mine.place_static("hw_floor_mine", x=0, y=0, z=-10)
+mine.place_static("hw_floor_mine", x=0, y=0, z=-10)    # floor
+mine.place_static("hw_floor_mine", x=0, y=0, z=490)    # ceiling
+# Walls — floor is 1320×1080; N/S boundary ±540, E/W boundary ±660
+# N/S walls: hw_wall_small (sx=1320), long in X, no rotation
+mine.place_static("hw_wall_small",    x=0,    y=540,  z=0)   # north
+mine.place_static("hw_wall_small",    x=0,    y=-540, z=0)   # south
+# E/W walls: hw_wall_mine_ew (sy=1080), long in Y, no rotation
+mine.place_static("hw_wall_mine_ew",  x=660,  y=0,    z=0)   # east
+mine.place_static("hw_wall_mine_ew",  x=-660, y=0,    z=0)   # west
 
 # Torch lights
 for lx, ly in [(-360, 240), (360, 240), (-360, -120), (360, -120), (0, 420)]:
