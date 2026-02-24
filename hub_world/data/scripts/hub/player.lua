@@ -53,8 +53,8 @@ local function setCountdown(text, color)
             props = {
                 text             = text,
                 textColor        = color,
-                textSize         = 36,
-                relativePosition = util.vector2(0.5, 0.88),
+                textSize         = 40,
+                relativePosition = util.vector2(0.5, 0.06),
                 anchor           = util.vector2(0.5, 0.5),
             },
         }

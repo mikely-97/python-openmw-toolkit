@@ -5,14 +5,14 @@ LOCAL script — runs on every ACTIVATOR in the game world.
 It filters for Hub World activator IDs and forwards to the GLOBAL script
 via sendGlobalEvent.  All world-mutation happens there.
 
-The script also handles the mine_generation counter (allows mine refresh
-to clear depletion state using only per-object storage keys).
+HW_Hide / HW_Show events: GLOBAL cannot write object scale/position (read-only
+from GLOBAL context).  These events delegate scale changes to the LOCAL script,
+which CAN write self_m.object.scale on its own object.
 ]]
 
 local self_m = require('openmw.self')
 local core   = require('openmw.core')
 local types  = require('openmw.types')
-local storage= require('openmw.storage')
 
 -- Set of all Hub World activator recordIds this script cares about
 local HW_IDS = {
@@ -58,29 +58,40 @@ local function onActivate(actor)
     end)
     if ok and isPlayer == false then return end
 
-    -- Diagnostic: confirm activation fires and LOCAL→PLAYER event routing works.
-    -- Remove this block once plants are confirmed interactable.
-    pcall(function()
-        actor:sendEvent("HW_ShowMsg", { text = "[HW] activated: " .. rid })
-    end)
-
     core.sendGlobalEvent("HW_Activate", {
         recordId = rid,
         objectId = rid,            -- unique per template; .id is nil in OpenMW 0.50
-        object   = self_m.object,  -- world-object ref so GLOBAL can hide/show
+        object   = self_m.object,  -- world-object ref so GLOBAL can reference it
         actor    = actor,
     })
 end
 
--- GLOBAL sends these when a plant is harvested / respawns.
--- Fallback path: if world.setObjectEnabled is unavailable in GLOBAL,
--- it forwards to here and we try setting our own scale.
-local function onHW_Hide()
-    pcall(function() self_m.object.scale = 0.001 end)
+-- GLOBAL sends HW_Hide when a plant is harvested.
+-- data.actor: the harvesting player (for error reporting).
+-- LOCAL scripts can write self_m.object.scale on their own object;
+-- GLOBAL script writes to object.scale/position are rejected as read-only.
+local function onHW_Hide(data)
+    local actor = data and data.actor
+    local ok, err = pcall(function()
+        self_m.object.scale = 0.001
+    end)
+    if not ok and actor then
+        pcall(function()
+            actor:sendEvent("HW_ShowMsg", { text = "[HW LOC HIDE ERR] " .. tostring(err) })
+        end)
+    end
 end
 
-local function onHW_Show()
-    pcall(function() self_m.object.scale = 1.0 end)
+local function onHW_Show(data)
+    local actor = data and data.actor
+    local ok, err = pcall(function()
+        self_m.object.scale = 1.0
+    end)
+    if not ok and actor then
+        pcall(function()
+            actor:sendEvent("HW_ShowMsg", { text = "[HW LOC SHOW ERR] " .. tostring(err) })
+        end)
+    end
 end
 
 return {

@@ -47,9 +47,10 @@ local G = storage.globalSection("HubWorld")
 -- Session-only state (not persisted)
 -- ---------------------------------------------------------------------------
 
-local realTimeAccum   = 0.0   -- accumulated real seconds since game load
-local plant_objects   = {}    -- rid → {object, readyAt(real), shown}
-local countdown_timer = 0.0   -- time since last countdown update to player
+local realTimeAccum        = 0.0   -- accumulated real seconds since game load
+local plant_objects        = {}    -- rid → {recordId, cellName, position, readyAt, shown}
+local countdown_timer      = 0.0   -- time since last countdown update to player
+local playerStatsInitialized = false
 
 -- Safe wrapper: core.getGameTimeInSeconds() is not available in all OpenMW
 -- 0.50 builds.  Falls back to real-time × default timescale (30) so that
@@ -64,7 +65,7 @@ end
 -- ---------------------------------------------------------------------------
 
 local SECS_PER_HOUR      = 3600
-local PLANT_RESPAWN_REAL = 300   -- 5 real-world minutes (session-only timer)
+local PLANT_RESPAWN_REAL = 5     -- seconds until a harvested garden plant reappears
 local PLANT_RESPAWN_GAME = 9000  -- ≈5 min at timescale 30 (storage cooldown)
 
 local PLANT_DISPLAY_NAMES = {
@@ -238,19 +239,80 @@ local function trainSkill(actor, skillName, amount)
     end)
 end
 
--- Hide a world object; falls back to sending HW_Hide event to its LOCAL script.
-local function hideObject(obj)
-    local ok = pcall(function() world.setObjectEnabled(obj, false) end)
-    if not ok then
-        pcall(function() obj:sendEvent("HW_Hide", {}) end)
+-- Apply initial player stat boosts once per session (resets on reload for easy iteration).
+local function initPlayerStats()
+    if playerStatsInitialized then return end
+    local ok, player = pcall(function() return world.getPlayer() end)
+    if not ok or not player then return end
+    playerStatsInitialized = true
+
+    local function setAttr(name, val)
+        local aok, aerr = pcall(function()
+            local stat = types.NPC.stats.attributes[name](player)
+            stat.base = val
+        end)
+        if not aok then
+            pcall(function() sendMsg(player, "[HW ATTR ERR] " .. name .. ": " .. tostring(aerr)) end)
+        end
+    end
+
+    local function setSkill(name, val)
+        local sok, serr = pcall(function()
+            local stat = types.NPC.stats.skills[name](player)
+            stat.base = val
+        end)
+        if not sok then
+            pcall(function() sendMsg(player, "[HW SKILL ERR] " .. name .. ": " .. tostring(serr)) end)
+        end
+    end
+
+    setAttr("speed",      100)
+    setSkill("athletics",  100)
+    setSkill("acrobatics", 100)
+end
+
+-- Hide a harvested plant by removing it from the world.
+-- Object properties (scale, position) are read-only from all Lua script types
+-- in OpenMW 0.50; removal + recreation is the only reliable hide/show path.
+local function hideObject(obj, actor)
+    if not obj then return end
+    local ok, err = pcall(function() obj:remove() end)
+    if not ok and actor then
+        sendMsg(actor, "[HW HIDE ERR] " .. tostring(err))
     end
 end
 
--- Show a previously hidden world object.
-local function showObject(obj)
-    local ok = pcall(function() world.setObjectEnabled(obj, true) end)
-    if not ok then
-        pcall(function() obj:sendEvent("HW_Show", {}) end)
+-- Recreate a plant at the position/cell stored in its plant_objects entry.
+-- Uses getCellByName each time to avoid stale cell references.
+local function recreatePlant(info)
+    local pok, player = pcall(function() return world.getPlayer() end)
+    local function gp(text)
+        if pok and player then pcall(function() sendMsg(player, text) end) end
+    end
+
+    if not info.cellName or not info.position then
+        gp("[HW RESPAWN] missing data for " .. tostring(info.recordId))
+        return
+    end
+
+    local cell = world.getCellByName(info.cellName)
+    if not cell then
+        gp("[HW RESPAWN] cell not found: " .. tostring(info.cellName))
+        return
+    end
+
+    gp("[HW RESPAWN] placing " .. info.recordId
+       .. " in '" .. info.cellName .. "'"
+       .. " at " .. tostring(info.position))
+
+    local ok, result = pcall(function()
+        return world.placeNewObject(info.recordId, cell, info.position)
+    end)
+
+    if ok then
+        gp("[HW RESPAWN] result: " .. tostring(result))
+    else
+        gp("[HW RESPAWN ERR] " .. tostring(result))
     end
 end
 
@@ -281,21 +343,37 @@ local function handlePlant(recordId, actor, worldObject)
     local cfg = HARVEST_CFG[recordId]
     if not cfg then return end
 
+    local isGardenPlant = (recordId:find("^hw_plant_") ~= nil)
+
+    -- Guard: prevent double-harvest while plant is hidden / on respawn timer.
+    -- (plant is still technically activatable at scale 0.001)
+    if isGardenPlant then
+        local existing = plant_objects[recordId]
+        if existing and not existing.shown then
+            sendMsg(actor, "This plant has not grown back yet.")
+            return
+        end
+    end
+
     -- Grant ingredient
     giveItem(actor, cfg.item, 1)
 
-    local isGardenPlant = (recordId:find("^hw_plant_") ~= nil)
-
-    -- Garden plants: hide the object and start the real-time respawn timer.
-    -- The hidden object cannot be activated again, so no separate cooldown
-    -- check is needed.  Mushrooms (forest) don't hide — they just give an item.
+    -- Garden plants: remove from world and start real-time respawn timer.
+    -- Mushrooms (forest) don't hide — they just give an item with a storage cooldown.
     if isGardenPlant and worldObject then
+        local pos, cell_name
+        pcall(function()
+            pos       = worldObject.position
+            cell_name = worldObject.cell and worldObject.cell.name or ""
+        end)
         plant_objects[recordId] = {
-            object  = worldObject,
-            readyAt = realTimeAccum + PLANT_RESPAWN_REAL,
-            shown   = false,
+            recordId = recordId,
+            position = pos,
+            cellName = cell_name,
+            readyAt  = realTimeAccum + PLANT_RESPAWN_REAL,
+            shown    = false,
         }
-        hideObject(worldObject)
+        hideObject(worldObject, actor)
     elseif not isGardenPlant then
         -- Mushrooms: use storage cooldown (game-time, safe via getGameTime())
         local now = getGameTime()
@@ -621,7 +699,13 @@ local function checkPlantRespawns()
     for rid, info in pairs(plant_objects) do
         if not info.shown and realTimeAccum >= info.readyAt then
             info.shown = true
-            if info.object then showObject(info.object) end
+            local pok, player = pcall(function() return world.getPlayer() end)
+            if pok and player then
+                pcall(function()
+                    sendMsg(player, "[HW] Respawn timer fired: " .. rid)
+                end)
+            end
+            recreatePlant(info)
         end
     end
 end
@@ -653,6 +737,7 @@ local function onUpdate(dt)
     realTimeAccum   = realTimeAccum   + dt
     countdown_timer = countdown_timer + dt
 
+    initPlayerStats()
     checkPlantRespawns()
 
     if countdown_timer >= 1.0 then
