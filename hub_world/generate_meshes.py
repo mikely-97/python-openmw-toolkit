@@ -187,6 +187,38 @@ def write_white_dds(out_dir: str):
     return path
 
 
+def _make_icon_dds(r: int, g: int, b: int, size: int = 32) -> bytes:
+    """Return a solid-colour size×size uncompressed RGBA DDS for use as an icon."""
+    pf = _struct.pack(
+        "<IIIIIIII",
+        32, 0x41, 0, 32,
+        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000,
+    )
+    header = _struct.pack("<IIIIIII", 124, 0x100F, size, size, size * 4, 0, 0)
+    header += _struct.pack("<11I", *([0] * 11))
+    header += pf
+    header += _struct.pack("<IIIII", 0x1000, 0, 0, 0, 0)
+    assert len(header) == 124
+    pixel = bytes([b, g, r, 255])   # BGRA byte order
+    return b"DDS " + header + pixel * (size * size)
+
+
+def write_herb_icons(out_dir: str):
+    """Write solid-colour DDS icon files to <out_dir>/icons/hub_world/."""
+    icon_dir = os.path.join(out_dir, "icons", "hub_world")
+    os.makedirs(icon_dir, exist_ok=True)
+    icons = {
+        "herb_basil.dds": _make_icon_dds(30, 120, 40),    # dark green
+        "herb_mint.dds":  _make_icon_dds(40, 170, 130),   # cyan-green
+    }
+    for name, data in icons.items():
+        path = os.path.join(icon_dir, name)
+        with open(path, "wb") as f:
+            f.write(data)
+        print(f"[HubWorld] Icon : {path}")
+    return icon_dir
+
+
 def _make_brick_dds() -> bytes:
     """Return a 64×64 light-gray brick-pattern DDS (uncompressed BGRA).
 
@@ -515,6 +547,19 @@ def build_plant_herb():
     ]
 
 
+def build_herb_item():
+    """Small herb bundle — the inventory/dropped-item mesh.
+
+    Much smaller than the activator plant_herb (90 GU); this is the picked-up
+    herb as it appears in the world or in the inventory model slot.
+    """
+    return [
+        SubMesh("stem_i",    0.22, 0.48, 0.08).cylinder(radius=2, height=14),
+        SubMesh("leaf_i_lo", 0.14, 0.66, 0.10).box(16, 5, 6, oz=4),
+        SubMesh("leaf_i_hi", 0.14, 0.66, 0.10).box(5, 16, 6, oz=9),
+    ]
+
+
 def build_plant_mushroom():
     return [
         SubMesh("mstem", 0.82, 0.78, 0.62).cylinder(radius=5,  height=20),
@@ -700,6 +745,7 @@ def build_vending_machine():
 MESHES = [
     # (output filename,          builder,              kwargs)
     ("plant_herb.dae",           build_plant_herb,     {}),
+    ("herb_item.dae",            build_herb_item,      {}),
     ("plant_mushroom.dae",       build_plant_mushroom, {}),
     ("tree.dae",                 build_tree,           {}),
     ("log.dae",                  build_log,            {}),
@@ -760,6 +806,7 @@ if __name__ == "__main__":
     print(f"[HubWorld] White texture : {white_path}")
     brick_path = write_brick_dds(DATA_DIR)
     print(f"[HubWorld] Brick texture : {brick_path}")
+    write_herb_icons(DATA_DIR)
 
     print(f"[HubWorld] Writing {len(MESHES)} mesh(es) to: {OUT_DIR}")
     for entry in MESHES:

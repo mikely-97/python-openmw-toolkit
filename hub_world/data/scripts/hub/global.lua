@@ -188,11 +188,20 @@ end
 -- Correct OpenMW 0.50 API for inventory mutation (GLOBAL scripts only):
 --   world.createObject(id, count):moveInto(types.Actor.inventory(actor))  – add
 --   types.Actor.inventory(actor):find(id):remove(count)                   – remove
+-- world.createObject(id, N) with N > 1 triggers Morrowind's gold denomination
+-- lookup: N=5 → "gold_005", N=10 → "gold_010", etc.  Only non-gold MISC items
+-- accept N > 1 safely.  Work around by looping with count=1 for all items.
 local function giveItem(actor, id, count)
-    pcall(function()
-        local item = world.createObject(id, count or 1)
-        item:moveInto(types.Actor.inventory(actor))
-    end)
+    local n = math.max(1, math.floor(count or 1))
+    for i = 1, n do
+        local ok, err = pcall(function()
+            world.createObject(id, 1):moveInto(types.Actor.inventory(actor))
+        end)
+        if not ok then
+            sendMsg(actor, "[HW GIVE ERR] " .. tostring(id) .. ": " .. tostring(err))
+            return
+        end
+    end
 end
 
 local function takeItem(actor, id, count)

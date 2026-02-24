@@ -56,7 +56,8 @@ def mesh(name: str) -> str:
 
 
 def icon(name: str) -> str:
-    return "icons/hub_world/" + name + ".dds"
+    """Return VFS-relative icon path (no leading 'icons/' — engine adds it)."""
+    return "hub_world/" + name + ".dds"
 
 
 # ---------------------------------------------------------------------------
@@ -88,12 +89,12 @@ RESTORE_HEALTH = {"effect_id": 75, "skill_id": -1, "attribute_id": -1}
 RESTORE_FATIGUE = {"effect_id": 77, "skill_id": -1, "attribute_id": -1}
 
 addon.add_ingredient("hw_herb_basil",
-    name="Garden Basil", mesh=mesh("plant_herb"),
+    name="Garden Basil", mesh=mesh("herb_item"), icon=icon("herb_basil"),
     weight=0.1, value=5,
     effects=[RESTORE_HEALTH])
 
 addon.add_ingredient("hw_herb_mint",
-    name="Garden Mint", mesh=mesh("plant_herb"),
+    name="Garden Mint", mesh=mesh("herb_item"), icon=icon("herb_mint"),
     weight=0.1, value=5,
     effects=[RESTORE_FATIGUE])
 
@@ -116,6 +117,12 @@ addon.add_misc_item("hw_stone",       name="Stone Chunk",mesh=mesh("mineral_ston
 addon.add_misc_item("hw_instrument_wood",
     name="Wooden Instrument", mesh=mesh("instrument"),
     weight=1.5, value=40)
+
+# -- Currency — the example suite template has no Gold_001 record, so we
+# define it here.  The engine barter system expects this exact ID. --
+addon.add_misc_item("Gold_001",
+    name="Drakes",       mesh=mesh("pass_token"),
+    weight=0.0, value=1)
 
 # -- Access tokens (pass items, key=True equivalent — no lock consumption) --
 # These are MISC items with no special flag; locked doors check for them

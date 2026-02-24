@@ -916,6 +916,16 @@ These will crash OpenMW at load with a fatal ESM error; not just warnings:
   ```
   Both `world.createObject` and `moveInto` are GLOBAL-script-only.
 
+- **`world.createObject(id, N)` with N > 1 triggers Morrowind's gold denomination
+  lookup** — for "Gold_001", passing count=5 makes the engine search for record
+  "gold_005"; count=10 → "gold_010"; etc.  This behaviour appears to affect any
+  record ID that ends in `_00N` digits.  **Always pass count=1 and loop:**
+  ```lua
+  for i = 1, amount do
+      world.createObject(id, 1):moveInto(types.Actor.inventory(actor))
+  end
+  ```
+
 ### Known non-fatal example suite warnings
 
 These warnings appear in the OpenMW log when running the example suite (including
