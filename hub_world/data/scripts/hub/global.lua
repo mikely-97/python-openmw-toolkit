@@ -139,18 +139,7 @@ local WEAPON_POWER = {
     hw_pickaxe_iron     = 2.0,
 }
 
--- Door destinations: recordId → { cell, x, y, z, require_item }
--- Garden doors are real DOOR records — engine teleports natively, no entry here.
-local DOOR_DESTINATIONS = {
-    hw_door_forest  = { cell="Hub Forest",  x=0,    y=-660, z=0,
-                        require="hw_forest_pass",
-                        locked_msg="You need a Forest Pass. Buy one from the vendor." },
-    hw_door_mine    = { cell="Hub Mine",    x=0,    y=420,  z=0,
-                        require="hw_mine_pass",
-                        locked_msg="You need a Mine Pass. Buy one from the vendor." },
-    hw_door_return_forest  = { cell="IdleMW", x=1020, y=0,    z=0 },
-    hw_door_return_mine    = { cell="IdleMW", x=0,    y=-1020,z=0 },
-}
+
 
 -- Anvil crafting recipes
 local ANVIL_RECIPES = {
