@@ -897,6 +897,25 @@ These will crash OpenMW at load with a fatal ESM error; not just warnings:
   will raise `UnicodeEncodeError` at build time.  Use ASCII approximations:
   ` - ` instead of ` — `, `"` instead of `"`, etc.
 
+- **`core.getGameTimeInSeconds()` does not exist in OpenMW 0.50 Flatpak**.
+  Calling it gives `attempt to call field 'getGameTimeInSeconds' (a nil value)`.
+  Wrap in `pcall` with a fallback (`realTimeAccum * 30`) or avoid entirely.
+
+- **`types.Actor.inventory(actor):add(id, count)` does not exist in OpenMW 0.50**.
+  The `Inventory` object only exposes: `countOf`, `find`, `findAll`, `getAll`,
+  `isResolved`, `resolve`.  There is **no `add` or `remove` method on Inventory**.
+  The correct pattern to give/take items from a GLOBAL script is:
+  ```lua
+  -- Give items (GLOBAL only):
+  local item = world.createObject(recordId, count)
+  item:moveInto(types.Actor.inventory(actor))
+
+  -- Take items (GLOBAL only):
+  local stack = types.Actor.inventory(actor):find(recordId)
+  if stack then stack:remove(count) end
+  ```
+  Both `world.createObject` and `moveInto` are GLOBAL-script-only.
+
 ### Known non-fatal example suite warnings
 
 These warnings appear in the OpenMW log when running the example suite (including

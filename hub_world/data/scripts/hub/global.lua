@@ -51,6 +51,14 @@ local realTimeAccum   = 0.0   -- accumulated real seconds since game load
 local plant_objects   = {}    -- rid → {object, readyAt(real), shown}
 local countdown_timer = 0.0   -- time since last countdown update to player
 
+-- Safe wrapper: core.getGameTimeInSeconds() is not available in all OpenMW
+-- 0.50 builds.  Falls back to real-time × default timescale (30) so that
+-- tree/mineral cooldowns are approximate but never crash.
+local function getGameTime()
+    local ok, t = pcall(function() return core.getGameTimeInSeconds() end)
+    return (ok and type(t) == "number") and t or (realTimeAccum * 30)
+end
+
 -- ---------------------------------------------------------------------------
 -- Configuration tables
 -- ---------------------------------------------------------------------------
@@ -177,6 +185,23 @@ local function sendMsg(actor, text)
     actor:sendEvent("HW_ShowMsg", { text = text })
 end
 
+-- Correct OpenMW 0.50 API for inventory mutation (GLOBAL scripts only):
+--   world.createObject(id, count):moveInto(types.Actor.inventory(actor))  – add
+--   types.Actor.inventory(actor):find(id):remove(count)                   – remove
+local function giveItem(actor, id, count)
+    pcall(function()
+        local item = world.createObject(id, count or 1)
+        item:moveInto(types.Actor.inventory(actor))
+    end)
+end
+
+local function takeItem(actor, id, count)
+    pcall(function()
+        local stack = types.Actor.inventory(actor):find(id)
+        if stack then stack:remove(count or 1) end
+    end)
+end
+
 local function getEquippedWeaponId(actor)
     local equip = types.Actor.getEquipment(actor)
     local slot = types.Actor.EQUIPMENT_SLOT
@@ -247,37 +272,14 @@ local function handlePlant(recordId, actor, worldObject)
     local cfg = HARVEST_CFG[recordId]
     if not cfg then return end
 
-    local now     = core.getGameTimeInSeconds()
-    local key     = "harvest_" .. recordId
-    local readyAt = G:get(key) or 0
-
-    if now < readyAt then
-        -- Show real-time remaining if we have the in-session tracker
-        local info = plant_objects[recordId]
-        if info and not info.shown then
-            local secLeft = math.max(0, math.ceil(info.readyAt - realTimeAccum))
-            local m = math.floor(secLeft / 60)
-            local s = secLeft % 60
-            sendMsg(actor, string.format(
-                "Already harvested. Respawns in %d:%02d.", m, s))
-        else
-            sendMsg(actor, "Already harvested. Come back later.")
-        end
-        return
-    end
-
     -- Grant ingredient
-    types.Actor.inventory(actor):add(cfg.item, 1)
+    giveItem(actor, cfg.item, 1)
 
-    -- Garden plants use real-time for the storage key too (PLANT_RESPAWN_GAME)
     local isGardenPlant = (recordId:find("^hw_plant_") ~= nil)
-    if isGardenPlant then
-        G:set(key, now + PLANT_RESPAWN_GAME)
-    else
-        G:set(key, now + (cfg.respawn or SECS_PER_HOUR * 24))
-    end
 
-    -- Hide plant and start real-time respawn tracker (garden plants only)
+    -- Garden plants: hide the object and start the real-time respawn timer.
+    -- The hidden object cannot be activated again, so no separate cooldown
+    -- check is needed.  Mushrooms (forest) don't hide — they just give an item.
     if isGardenPlant and worldObject then
         plant_objects[recordId] = {
             object  = worldObject,
@@ -285,6 +287,11 @@ local function handlePlant(recordId, actor, worldObject)
             shown   = false,
         }
         hideObject(worldObject)
+    elseif not isGardenPlant then
+        -- Mushrooms: use storage cooldown (game-time, safe via getGameTime())
+        local now = getGameTime()
+        local key = "harvest_" .. recordId
+        G:set(key, now + (cfg.respawn or SECS_PER_HOUR * 24))
     end
 
     local displayName = isGardenPlant
@@ -301,7 +308,7 @@ local function handleTree(recordId, objectId, actor)
     local cfg = TREE_CFG[recordId]
     if not cfg then return end
 
-    local now  = core.getGameTimeInSeconds()
+    local now  = getGameTime()
     local readyKey = "tree_ready_" .. objectId
     local readyAt  = G:get(readyKey) or 0
 
@@ -330,9 +337,8 @@ local function handleTree(recordId, objectId, actor)
     if hp <= 0 then
         local logs     = math.random(1, math.max(1, math.floor(power * 1.5)))
         local branches = math.random(1, math.max(1, math.floor(power * 2) + 1))
-        local inv = types.Actor.inventory(actor)
-        inv:add("hw_log",    logs)
-        inv:add("hw_branch", branches)
+        giveItem(actor, "hw_log",    logs)
+        giveItem(actor, "hw_branch", branches)
 
         G:set(readyKey, now + cfg.respawn)
         G:set(hpKey,    cfg.base_hp)
@@ -380,7 +386,7 @@ local function handleMineral(recordId, objectId, actor)
             amount = amount + 1
         end
 
-        types.Actor.inventory(actor):add(cfg.item, amount)
+        giveItem(actor, cfg.item, amount)
         G:set(depKey, true)
 
         local label = cfg.item:gsub("hw_", ""):gsub("_", " ")
@@ -407,7 +413,7 @@ local function handleMineRefresh(actor)
         return
     end
 
-    inv:remove("hw_mine_refresh", 1)
+    takeItem(actor, "hw_mine_refresh", 1)
     G:set("mine_refresh_pending", true)
     sendMsg(actor, "Mine refresh token used! The deposits will be available again.")
 end
@@ -451,15 +457,15 @@ local function handleAnvil(actor)
 
             if math.random() < successChance then
                 for _, pair in ipairs(recipe.consumes) do
-                    inv:remove(pair[1], pair[2])
+                    takeItem(actor, pair[1], pair[2])
                 end
-                inv:add(recipe.produces, 1)
+                giveItem(actor, recipe.produces, 1)
                 sendMsg(actor,
                     "You craft: " .. recipe.produces:gsub("hw_", ""):gsub("_", " ")
                     .. "!  (Repair skill: " .. math.floor(repSkill) .. ")")
             else
                 for _, pair in ipairs(recipe.fail_waste) do
-                    inv:remove(pair[1], pair[2])
+                    takeItem(actor, pair[1], pair[2])
                 end
                 sendMsg(actor,
                     "Crafting failed - you waste some materials. "
@@ -488,8 +494,8 @@ local function handleForge(actor)
 
     if oreAmt >= 2 then
         local batches = math.min(math.floor(oreAmt / 2), 5)
-        inv:remove("hw_iron_ore", batches * 2)
-        inv:add("hw_iron_ingot", batches)
+        takeItem(actor, "hw_iron_ore", batches * 2)
+        giveItem(actor, "hw_iron_ingot", batches)
         trainSkill(actor, "repair", 0.05 * batches)
         sendMsg(actor,
             "You smelt " .. (batches * 2) .. " ore into " .. batches .. " ingot(s).")
@@ -513,7 +519,7 @@ local function handleGardenVendor(actor)
     for _, id in ipairs(herbs) do
         local n = inv:countOf(id)
         if n > 0 then
-            inv:remove(id, n)
+            takeItem(actor, id, n)
             total = total + n
             local label = id:match("hw_herb_(.+)$") or id
             label = label:sub(1,1):upper() .. label:sub(2)
@@ -522,7 +528,7 @@ local function handleGardenVendor(actor)
     end
 
     if total > 0 then
-        inv:add("Gold_001", total * 5)
+        giveItem(actor, "Gold_001", total * 5)
         sendMsg(actor,
             "Herb Collector: sold " .. table.concat(parts, ", ")
             .. " for " .. (total * 5) .. " gold.")
@@ -569,24 +575,32 @@ local function onHW_Activate(data)
     local actor = data.actor
     local obj   = data.object   -- world-object ref (may be nil for older saves)
 
-    if HARVEST_CFG[rid] then
-        handlePlant(rid, actor, obj)
-    elseif TREE_CFG[rid] then
-        handleTree(rid, oid, actor)
-    elseif MINERAL_CFG[rid] then
-        handleMineral(rid, oid, actor)
-    elseif rid == "hw_bed" then
-        handleBed(actor)
-    elseif rid == "hw_anvil" then
-        handleAnvil(actor)
-    elseif rid == "hw_forge" then
-        handleForge(actor)
-    elseif rid == "hw_mine_refresh_station" then
-        handleMineRefresh(actor)
-    elseif rid == "hw_vending_machine_garden" then
-        handleGardenVendor(actor)
-    elseif DOOR_DESTINATIONS[rid] then
-        handleDoor(rid, actor)
+    local ok, err = pcall(function()
+        if HARVEST_CFG[rid] then
+            handlePlant(rid, actor, obj)
+        elseif TREE_CFG[rid] then
+            handleTree(rid, oid, actor)
+        elseif MINERAL_CFG[rid] then
+            handleMineral(rid, oid, actor)
+        elseif rid == "hw_bed" then
+            handleBed(actor)
+        elseif rid == "hw_anvil" then
+            handleAnvil(actor)
+        elseif rid == "hw_forge" then
+            handleForge(actor)
+        elseif rid == "hw_mine_refresh_station" then
+            handleMineRefresh(actor)
+        elseif rid == "hw_vending_machine_garden" then
+            handleGardenVendor(actor)
+        elseif DOOR_DESTINATIONS[rid] then
+            handleDoor(rid, actor)
+        end
+    end)
+
+    if not ok then
+        pcall(function()
+            actor:sendEvent("HW_ShowMsg", { text = "[HW ERR] " .. tostring(err) })
+        end)
     end
 end
 
