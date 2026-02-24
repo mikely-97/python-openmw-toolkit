@@ -47,10 +47,9 @@ local G = storage.globalSection("HubWorld")
 -- Session-only state (not persisted)
 -- ---------------------------------------------------------------------------
 
-local realTimeAccum        = 0.0   -- accumulated real seconds since game load
-local plant_objects        = {}    -- rid → {recordId, cellName, position, readyAt, shown}
-local countdown_timer      = 0.0   -- time since last countdown update to player
-local playerStatsInitialized = false
+local realTimeAccum   = 0.0   -- accumulated real seconds since game load
+local plant_objects   = {}    -- rid → {recordId, cellName, position, readyAt, shown}
+local countdown_timer = 0.0   -- time since last countdown update to player
 
 -- Safe wrapper: core.getGameTimeInSeconds() is not available in all OpenMW
 -- 0.50 builds.  Falls back to real-time × default timescale (30) so that
@@ -239,38 +238,6 @@ local function trainSkill(actor, skillName, amount)
     end)
 end
 
--- Apply initial player stat boosts once per session (resets on reload for easy iteration).
-local function initPlayerStats()
-    if playerStatsInitialized then return end
-    local ok, player = pcall(function() return world.getPlayer() end)
-    if not ok or not player then return end
-    playerStatsInitialized = true
-
-    local function setAttr(name, val)
-        local aok, aerr = pcall(function()
-            local stat = types.NPC.stats.attributes[name](player)
-            stat.base = val
-        end)
-        if not aok then
-            pcall(function() sendMsg(player, "[HW ATTR ERR] " .. name .. ": " .. tostring(aerr)) end)
-        end
-    end
-
-    local function setSkill(name, val)
-        local sok, serr = pcall(function()
-            local stat = types.NPC.stats.skills[name](player)
-            stat.base = val
-        end)
-        if not sok then
-            pcall(function() sendMsg(player, "[HW SKILL ERR] " .. name .. ": " .. tostring(serr)) end)
-        end
-    end
-
-    setAttr("speed",      100)
-    setSkill("athletics",  100)
-    setSkill("acrobatics", 100)
-end
-
 -- Hide a harvested plant by removing it from the world.
 -- Object properties (scale, position) are read-only from all Lua script types
 -- in OpenMW 0.50; removal + recreation is the only reliable hide/show path.
@@ -283,7 +250,7 @@ local function hideObject(obj, actor)
 end
 
 -- Recreate a plant at the position/cell stored in its plant_objects entry.
--- Uses getCellByName each time to avoid stale cell references.
+-- world.createObject() starts disabled; :teleport() places + enables in one step.
 local function recreatePlant(info)
     local pok, player = pcall(function() return world.getPlayer() end)
     local function gp(text)
@@ -295,24 +262,15 @@ local function recreatePlant(info)
         return
     end
 
-    local cell = world.getCellByName(info.cellName)
-    if not cell then
-        gp("[HW RESPAWN] cell not found: " .. tostring(info.cellName))
-        return
-    end
-
-    gp("[HW RESPAWN] placing " .. info.recordId
-       .. " in '" .. info.cellName .. "'"
-       .. " at " .. tostring(info.position))
-
-    local ok, result = pcall(function()
-        return world.placeNewObject(info.recordId, cell, info.position)
+    local ok, err = pcall(function()
+        local obj = world.createObject(info.recordId, 1)
+        obj:teleport(info.cellName, info.position)
     end)
 
     if ok then
-        gp("[HW RESPAWN] result: " .. tostring(result))
+        gp("[HW RESPAWN] " .. info.recordId .. " placed in '" .. info.cellName .. "'")
     else
-        gp("[HW RESPAWN ERR] " .. tostring(result))
+        gp("[HW RESPAWN ERR] " .. tostring(err))
     end
 end
 
@@ -737,7 +695,6 @@ local function onUpdate(dt)
     realTimeAccum   = realTimeAccum   + dt
     countdown_timer = countdown_timer + dt
 
-    initPlayerStats()
     checkPlantRespawns()
 
     if countdown_timer >= 1.0 then
