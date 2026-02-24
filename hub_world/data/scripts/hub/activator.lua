@@ -39,6 +39,8 @@ local HW_IDS = {
     -- Stations
     hw_bed=true, hw_anvil=true, hw_forge=true,
     hw_mine_refresh_station=true,
+    -- Garden herb collector (mini vending machine)
+    hw_vending_machine_garden=true,
     -- Doors (only ACTI doors — garden uses real DOOR records handled by engine)
     hw_door_forest=true,
     hw_door_mine=true,
@@ -56,15 +58,37 @@ local function onActivate(actor)
     end)
     if ok and isPlayer == false then return end
 
+    -- Diagnostic: confirm activation fires and LOCAL→PLAYER event routing works.
+    -- Remove this block once plants are confirmed interactable.
+    pcall(function()
+        actor:sendEvent("HW_ShowMsg", { text = "[HW] activated: " .. rid })
+    end)
+
     core.sendGlobalEvent("HW_Activate", {
         recordId = rid,
-        objectId = rid,   -- each activator has a unique recordId; .id is nil in 0.50
+        objectId = rid,            -- unique per template; .id is nil in OpenMW 0.50
+        object   = self_m.object,  -- world-object ref so GLOBAL can hide/show
         actor    = actor,
     })
+end
+
+-- GLOBAL sends these when a plant is harvested / respawns.
+-- Fallback path: if world.setObjectEnabled is unavailable in GLOBAL,
+-- it forwards to here and we try setting our own scale.
+local function onHW_Hide()
+    pcall(function() self_m.object.scale = 0.001 end)
+end
+
+local function onHW_Show()
+    pcall(function() self_m.object.scale = 1.0 end)
 end
 
 return {
     engineHandlers = {
         onActivated = onActivate,   -- LOCAL handler is onActivated(actor)
+    },
+    eventHandlers = {
+        HW_Hide = onHW_Hide,
+        HW_Show = onHW_Show,
     },
 }

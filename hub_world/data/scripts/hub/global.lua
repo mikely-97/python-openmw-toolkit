@@ -22,14 +22,17 @@ OpenMW Lua API notes used here
     .<skillName>(actor).base      – base skill value (read/write)
   world.teleportActor(actor, cell, pos, rot) – move actor to cell
   world.getCellByName(name)       – find interior cell
+  world.getPlayer()               – player world object
+  world.setObjectEnabled(obj, bool) – show/hide world object (0.50+)
   openmw.util.vector3(x,y,z)     – 3-component vector
 
-Time advancement for the bed
------------------------------
-  As of OpenMW 0.49, there is no public Lua API to advance in-game time
-  or open the rest/wait menu from a script.  The bed currently restores
-  the player's stats to full and shows a flavour message.  A future
-  OpenMW release that exposes world.advanceTime() will be easy to wire in.
+Plant respawn system
+--------------------
+  Plants use two parallel timers:
+    1. Storage key "harvest_<rid>": game-time readyAt (persists across saves).
+       ~9000 game-seconds ≈ 5 real minutes at the default timescale of 30.
+    2. plant_objects[rid]: real-time readyAt using accumulated dt.
+       Visual hide/show is session-only; storage check is the authority.
 ]]
 
 local storage = require('openmw.storage')
@@ -41,24 +44,39 @@ local util    = require('openmw.util')
 local G = storage.globalSection("HubWorld")
 
 -- ---------------------------------------------------------------------------
+-- Session-only state (not persisted)
+-- ---------------------------------------------------------------------------
+
+local realTimeAccum   = 0.0   -- accumulated real seconds since game load
+local plant_objects   = {}    -- rid → {object, readyAt(real), shown}
+local countdown_timer = 0.0   -- time since last countdown update to player
+
+-- ---------------------------------------------------------------------------
 -- Configuration tables
 -- ---------------------------------------------------------------------------
 
-local SECS_PER_HOUR = 3600
+local SECS_PER_HOUR      = 3600
+local PLANT_RESPAWN_REAL = 300   -- 5 real-world minutes (session-only timer)
+local PLANT_RESPAWN_GAME = 9000  -- ≈5 min at timescale 30 (storage cooldown)
+
+local PLANT_DISPLAY_NAMES = {
+    hw_plant_basil = "Garden Basil",
+    hw_plant_mint  = "Garden Mint",
+}
 
 -- Items granted by each harvestable activator recordId
 local HARVEST_CFG = {
     -- plants (Garden)
-    hw_plant_basil_01 = { item="hw_herb_basil",     respawn=24*SECS_PER_HOUR },
-    hw_plant_basil_02 = { item="hw_herb_basil",     respawn=24*SECS_PER_HOUR },
-    hw_plant_basil_03 = { item="hw_herb_basil",     respawn=24*SECS_PER_HOUR },
-    hw_plant_basil_04 = { item="hw_herb_basil",     respawn=24*SECS_PER_HOUR },
-    hw_plant_basil_05 = { item="hw_herb_basil",     respawn=24*SECS_PER_HOUR },
-    hw_plant_mint_01  = { item="hw_herb_mint",      respawn=24*SECS_PER_HOUR },
-    hw_plant_mint_02  = { item="hw_herb_mint",      respawn=24*SECS_PER_HOUR },
-    hw_plant_mint_03  = { item="hw_herb_mint",      respawn=24*SECS_PER_HOUR },
-    hw_plant_mint_04  = { item="hw_herb_mint",      respawn=24*SECS_PER_HOUR },
-    hw_plant_mint_05  = { item="hw_herb_mint",      respawn=24*SECS_PER_HOUR },
+    hw_plant_basil_01 = { item="hw_herb_basil" },
+    hw_plant_basil_02 = { item="hw_herb_basil" },
+    hw_plant_basil_03 = { item="hw_herb_basil" },
+    hw_plant_basil_04 = { item="hw_herb_basil" },
+    hw_plant_basil_05 = { item="hw_herb_basil" },
+    hw_plant_mint_01  = { item="hw_herb_mint"  },
+    hw_plant_mint_02  = { item="hw_herb_mint"  },
+    hw_plant_mint_03  = { item="hw_herb_mint"  },
+    hw_plant_mint_04  = { item="hw_herb_mint"  },
+    hw_plant_mint_05  = { item="hw_herb_mint"  },
     -- mushrooms (Forest)
     hw_mushroom_heal_01 = { item="hw_mushroom_heal", respawn=24*SECS_PER_HOUR },
     hw_mushroom_heal_02 = { item="hw_mushroom_heal", respawn=24*SECS_PER_HOUR },
@@ -115,7 +133,6 @@ local WEAPON_POWER = {
 
 -- Door destinations: recordId → { cell, x, y, z, require_item }
 -- Garden doors are real DOOR records — engine teleports natively, no entry here.
--- Positions are 60 % of the original design to match build.py cell layout.
 local DOOR_DESTINATIONS = {
     hw_door_forest  = { cell="Hub Forest",  x=0,    y=-660, z=0,
                         require="hw_forest_pass",
@@ -123,15 +140,11 @@ local DOOR_DESTINATIONS = {
     hw_door_mine    = { cell="Hub Mine",    x=0,    y=420,  z=0,
                         require="hw_mine_pass",
                         locked_msg="You need a Mine Pass. Buy one from the vendor." },
-    -- Return destinations land in front of the respective outgoing door in IdleMW
     hw_door_return_forest  = { cell="IdleMW", x=1020, y=0,    z=0 },
     hw_door_return_mine    = { cell="IdleMW", x=0,    y=-1020,z=0 },
 }
 
--- Anvil crafting recipes: { requires, consumes, produces, fail_consumes }
--- "requires" = item that must be present (not consumed on failure)
--- "consumes" = { {id, n}, … } consumed on success
--- "fail_consumes" = { {id, n}, … } consumed on failure (wasted material)
+-- Anvil crafting recipes
 local ANVIL_RECIPES = {
     {
         label   = "Wooden Axe (1 log + 2 branches)",
@@ -161,14 +174,11 @@ local ANVIL_RECIPES = {
 -- ---------------------------------------------------------------------------
 
 local function sendMsg(actor, text)
-    -- Send display message to player-side script
     actor:sendEvent("HW_ShowMsg", { text = text })
 end
 
 local function getEquippedWeaponId(actor)
     local equip = types.Actor.getEquipment(actor)
-    -- Equipment slot for the right hand (weapon) in Morrowind = slot 13
-    -- The constant name may vary by OpenMW version; try both forms.
     local slot = types.Actor.EQUIPMENT_SLOT
         and (types.Actor.EQUIPMENT_SLOT.CarriedRight or 13)
         or 13
@@ -180,48 +190,107 @@ local function getEquippedWeaponId(actor)
 end
 
 local function getSkill(actor, skillName)
-    -- Returns base skill value (0-100+).
-    -- For NPCs and the player the API is identical.
     local ok, val = pcall(function()
         return types.NPC.stats.skills[skillName](actor).base
     end)
     if ok then return val end
-    return 10  -- safe default if API differs
+    return 10
 end
 
 local function trainSkill(actor, skillName, amount)
-    -- Attempt to increment a skill.  In OpenMW, .base on dynamic stats
-    -- is typically writable; the engine may cap it.
     pcall(function()
         local stat = types.NPC.stats.skills[skillName](actor)
         stat.base = stat.base + amount
     end)
 end
 
+-- Hide a world object; falls back to sending HW_Hide event to its LOCAL script.
+local function hideObject(obj)
+    local ok = pcall(function() world.setObjectEnabled(obj, false) end)
+    if not ok then
+        pcall(function() obj:sendEvent("HW_Hide", {}) end)
+    end
+end
+
+-- Show a previously hidden world object.
+local function showObject(obj)
+    local ok = pcall(function() world.setObjectEnabled(obj, true) end)
+    if not ok then
+        pcall(function() obj:sendEvent("HW_Show", {}) end)
+    end
+end
+
+-- Friendly display name for a garden plant recordId.
+local function getPlantDisplayName(rid)
+    local base = rid:match("^(hw_plant_%a+)_%d+$")
+    return PLANT_DISPLAY_NAMES[base] or rid:gsub("_", " ")
+end
+
+-- Seconds until the last-harvested garden plant respawns (real time).
+-- Returns 0 when all plants have respawned (or none were harvested this session).
+local function getGardenCountdownSecs()
+    local maxLeft = 0
+    for _, info in pairs(plant_objects) do
+        if not info.shown then
+            local left = info.readyAt - realTimeAccum
+            if left > maxLeft then maxLeft = left end
+        end
+    end
+    return math.max(0, math.floor(maxLeft))
+end
+
 -- ---------------------------------------------------------------------------
--- Plant / mushroom pickup
+-- Plant / mushroom pickup (garden plants + forest mushrooms)
 -- ---------------------------------------------------------------------------
 
-local function handlePlant(recordId, objectId, actor)
+local function handlePlant(recordId, actor, worldObject)
     local cfg = HARVEST_CFG[recordId]
     if not cfg then return end
 
     local now     = core.getGameTimeInSeconds()
-    local key     = "harvest_" .. objectId
+    local key     = "harvest_" .. recordId
     local readyAt = G:get(key) or 0
 
     if now < readyAt then
-        local hoursLeft = math.ceil((readyAt - now) / SECS_PER_HOUR)
-        sendMsg(actor, "Already harvested. Ready in ~" .. hoursLeft .. " hour(s).")
+        -- Show real-time remaining if we have the in-session tracker
+        local info = plant_objects[recordId]
+        if info and not info.shown then
+            local secLeft = math.max(0, math.ceil(info.readyAt - realTimeAccum))
+            local m = math.floor(secLeft / 60)
+            local s = secLeft % 60
+            sendMsg(actor, string.format(
+                "Already harvested. Respawns in %d:%02d.", m, s))
+        else
+            sendMsg(actor, "Already harvested. Come back later.")
+        end
         return
     end
 
+    -- Grant ingredient
     types.Actor.inventory(actor):add(cfg.item, 1)
 
-    G:set(key, now + cfg.respawn)
+    -- Garden plants use real-time for the storage key too (PLANT_RESPAWN_GAME)
+    local isGardenPlant = (recordId:find("^hw_plant_") ~= nil)
+    if isGardenPlant then
+        G:set(key, now + PLANT_RESPAWN_GAME)
+    else
+        G:set(key, now + (cfg.respawn or SECS_PER_HOUR * 24))
+    end
 
-    local label = cfg.item:gsub("hw_", ""):gsub("_", " ")
-    sendMsg(actor, "You pick a " .. label .. ".")
+    -- Hide plant and start real-time respawn tracker (garden plants only)
+    if isGardenPlant and worldObject then
+        plant_objects[recordId] = {
+            object  = worldObject,
+            readyAt = realTimeAccum + PLANT_RESPAWN_REAL,
+            shown   = false,
+        }
+        hideObject(worldObject)
+    end
+
+    local displayName = isGardenPlant
+        and getPlantDisplayName(recordId)
+        or (cfg.item:gsub("hw_", ""):gsub("_", " "))
+    sendMsg(actor, "You have successfully harvested " .. displayName .. ".")
 end
 
 -- ---------------------------------------------------------------------------
@@ -242,37 +311,31 @@ local function handleTree(recordId, objectId, actor)
         return
     end
 
-    -- Check axe
     local wpnId = getEquippedWeaponId(actor)
     if not wpnId or not AXE_IDS[wpnId] then
         sendMsg(actor, "You need an axe equipped to chop this tree.")
         return
     end
 
-    -- Compute chop damage
     local axeSkill = getSkill(actor, "axe")
     local power    = WEAPON_POWER[wpnId] or 1.0
     local damage   = math.max(1, math.floor(axeSkill * 0.08 + power))
 
-    -- Retrieve / init tree HP
     local hpKey = "tree_hp_" .. objectId
     local hp    = G:get(hpKey) or cfg.base_hp
 
     hp = hp - damage
-
-    -- Train axe skill slightly per swing
     trainSkill(actor, "axe", 0.05)
 
     if hp <= 0 then
-        -- Tree felled!
         local logs     = math.random(1, math.max(1, math.floor(power * 1.5)))
         local branches = math.random(1, math.max(1, math.floor(power * 2) + 1))
         local inv = types.Actor.inventory(actor)
         inv:add("hw_log",    logs)
         inv:add("hw_branch", branches)
 
-        G:set(readyKey, now + cfg.respawn)  -- regrow in 7 days
-        G:set(hpKey,    cfg.base_hp)        -- reset HP for next time
+        G:set(readyKey, now + cfg.respawn)
+        G:set(hpKey,    cfg.base_hp)
 
         sendMsg(actor,
             "The tree falls! You get " .. logs .. " log(s) and "
@@ -299,24 +362,20 @@ local function handleMineral(recordId, objectId, actor)
         return
     end
 
-    -- Check pickaxe
     local wpnId = getEquippedWeaponId(actor)
     if not wpnId or not PICKAXE_IDS[wpnId] then
         sendMsg(actor, "You need a pickaxe equipped to mine this.")
         return
     end
 
-    -- Skill check
     local bluntSkill = getSkill(actor, "bluntweapon")
     local power      = WEAPON_POWER[wpnId] or 1.0
     local chance     = math.min(0.92, 0.25 + (bluntSkill / 100) * 0.65 + (power - 1) * 0.1)
 
-    -- Train blunt skill
     trainSkill(actor, "bluntweapon", 0.08)
 
     if math.random() < chance then
         local amount  = math.max(1, math.floor(1 + power * 0.5 + bluntSkill * 0.02))
-        -- Bonus ore at high skill
         if bluntSkill >= 40 and math.random() < 0.25 then
             amount = amount + 1
         end
@@ -348,31 +407,16 @@ local function handleMineRefresh(actor)
         return
     end
 
-    -- Consume token and clear all depletion flags
     inv:remove("hw_mine_refresh", 1)
-
-    for id, _ in pairs(MINERAL_CFG) do
-        -- We store depletion by objectId, not recordId.
-        -- Walk through known storage keys to find depleted minerals.
-        -- (A cleaner approach would track objectIds at placement time,
-        --  but storage iteration is not yet available in all OpenMW builds.)
-        -- Fallback: clear any storage key prefixed "depleted_".
-        -- See onSave/onLoad for how we track objectIds.
-    end
-
-    -- Use a dedicated refresh flag that the activator scripts check
     G:set("mine_refresh_pending", true)
     sendMsg(actor, "Mine refresh token used! The deposits will be available again.")
 end
 
 -- ---------------------------------------------------------------------------
--- Bed — rest / time advance
+-- Bed — rest / stat restore
 -- ---------------------------------------------------------------------------
 
 local function handleBed(actor)
-    -- Restore the player's health, magicka, and fatigue to full.
-    -- True time advance is not yet in the public Lua API (OpenMW 0.49).
-    -- Wire world.advanceTime(hours) here when available.
     pcall(function()
         local h = types.Actor.stats.health(actor)
         h.current = h.base
@@ -381,7 +425,7 @@ local function handleBed(actor)
         local f = types.Actor.stats.fatigue(actor)
         f.current = f.base
     end)
-    sendMsg(actor, "You rest on the bed and recover fully.  (24 h time advance TODO)")
+    sendMsg(actor, "You rest on the bed and recover fully.")
 end
 
 -- ---------------------------------------------------------------------------
@@ -392,7 +436,6 @@ local function handleAnvil(actor)
     local inv        = types.Actor.inventory(actor)
     local repSkill   = getSkill(actor, "repair")
 
-    -- Find first applicable recipe
     for _, recipe in ipairs(ANVIL_RECIPES) do
         local ok = true
         for itemId, needed in pairs(recipe.needs) do
@@ -419,15 +462,14 @@ local function handleAnvil(actor)
                     inv:remove(pair[1], pair[2])
                 end
                 sendMsg(actor,
-                    "Crafting failed — you waste some materials. "
+                    "Crafting failed - you waste some materials. "
                     .. "(Repair skill: " .. math.floor(repSkill)
                     .. " / chance " .. math.floor(successChance * 100) .. "%)")
             end
-            return  -- only attempt first matching recipe
+            return
         end
     end
 
-    -- No recipe matched — tell player what they need
     sendMsg(actor,
         "Crafting options: "
         .. "Wooden Axe (1 log + 2 branches)  |  "
@@ -445,7 +487,7 @@ local function handleForge(actor)
     local oreAmt = inv:countOf("hw_iron_ore")
 
     if oreAmt >= 2 then
-        local batches = math.min(math.floor(oreAmt / 2), 5)  -- max 5 ingots/use
+        local batches = math.min(math.floor(oreAmt / 2), 5)
         inv:remove("hw_iron_ore", batches * 2)
         inv:add("hw_iron_ingot", batches)
         trainSkill(actor, "repair", 0.05 * batches)
@@ -458,6 +500,38 @@ local function handleForge(actor)
 end
 
 -- ---------------------------------------------------------------------------
+-- Garden herb collector (mini vending machine)
+-- Buys all herbs from the player at 5 gold each.
+-- ---------------------------------------------------------------------------
+
+local function handleGardenVendor(actor)
+    local inv   = types.Actor.inventory(actor)
+    local total = 0
+    local parts = {}
+
+    local herbs = { "hw_herb_basil", "hw_herb_mint" }
+    for _, id in ipairs(herbs) do
+        local n = inv:countOf(id)
+        if n > 0 then
+            inv:remove(id, n)
+            total = total + n
+            local label = id:match("hw_herb_(.+)$") or id
+            label = label:sub(1,1):upper() .. label:sub(2)
+            parts[#parts+1] = n .. "x " .. label
+        end
+    end
+
+    if total > 0 then
+        inv:add("Gold_001", total * 5)
+        sendMsg(actor,
+            "Herb Collector: sold " .. table.concat(parts, ", ")
+            .. " for " .. (total * 5) .. " gold.")
+    else
+        sendMsg(actor, "Herb Collector: no herbs to sell.")
+    end
+end
+
+-- ---------------------------------------------------------------------------
 -- Door teleportation
 -- ---------------------------------------------------------------------------
 
@@ -465,7 +539,6 @@ local function handleDoor(recordId, actor)
     local dest = DOOR_DESTINATIONS[recordId]
     if not dest then return end
 
-    -- Check access requirement
     if dest.require then
         local inv = types.Actor.inventory(actor)
         if inv:countOf(dest.require) == 0 then
@@ -491,12 +564,13 @@ end
 -- ---------------------------------------------------------------------------
 
 local function onHW_Activate(data)
-    local rid      = data.recordId   -- ACTI record ID (template)
-    local oid      = data.objectId   -- unique world-object ID (instance)
-    local actor    = data.actor
+    local rid   = data.recordId
+    local oid   = data.objectId
+    local actor = data.actor
+    local obj   = data.object   -- world-object ref (may be nil for older saves)
 
     if HARVEST_CFG[rid] then
-        handlePlant(rid, oid, actor)
+        handlePlant(rid, actor, obj)
     elseif TREE_CFG[rid] then
         handleTree(rid, oid, actor)
     elseif MINERAL_CFG[rid] then
@@ -509,26 +583,66 @@ local function onHW_Activate(data)
         handleForge(actor)
     elseif rid == "hw_mine_refresh_station" then
         handleMineRefresh(actor)
+    elseif rid == "hw_vending_machine_garden" then
+        handleGardenVendor(actor)
     elseif DOOR_DESTINATIONS[rid] then
         handleDoor(rid, actor)
     end
 end
 
--- Handle the mine_refresh_pending flag: clear depleted_ flags
--- This runs via onUpdate so the activator script can also check it.
--- Note: player spawn is handled by the sStartCell GMST override in the
--- addon binary, not by Lua — no onNewGame handler needed.
+-- ---------------------------------------------------------------------------
+-- Respawn checking + countdown broadcast
+-- ---------------------------------------------------------------------------
+
+local function checkPlantRespawns()
+    for rid, info in pairs(plant_objects) do
+        if not info.shown and realTimeAccum >= info.readyAt then
+            info.shown = true
+            if info.object then showObject(info.object) end
+        end
+    end
+end
+
+local function sendCountdownUpdate()
+    local ok, player = pcall(function() return world.getPlayer() end)
+    if not ok or not player then return end
+
+    local cellName = ""
+    pcall(function() cellName = player.cell.name end)
+
+    local timeLeft
+    if cellName == "Hub Garden" then
+        timeLeft = getGardenCountdownSecs()
+    else
+        timeLeft = -1   -- tell player to hide widget
+    end
+
+    pcall(function()
+        player:sendEvent("HW_Countdown", { timeLeft = timeLeft })
+    end)
+end
+
+-- ---------------------------------------------------------------------------
+-- Main update loop
+-- ---------------------------------------------------------------------------
+
 local function onUpdate(dt)
+    realTimeAccum   = realTimeAccum   + dt
+    countdown_timer = countdown_timer + dt
+
+    checkPlantRespawns()
+
+    if countdown_timer >= 1.0 then
+        countdown_timer = 0
+        sendCountdownUpdate()
+    end
+
     if G:get("mine_refresh_pending") then
         G:set("mine_refresh_pending", false)
-        -- Clear all known mineral depletion keys by brute-force re-set
-        -- (Full storage key iteration is engine-version dependent)
         for id in pairs(MINERAL_CFG) do
-            -- We don't know the instance objectIds here, so use a workaround:
-            -- store a "generation" counter; activator.lua compares against it
             local gen = (G:get("mine_generation") or 0) + 1
             G:set("mine_generation", gen)
-            break  -- one increment per refresh is enough
+            break
         end
     end
 end

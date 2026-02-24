@@ -334,11 +334,16 @@ addon.add_static("hw_wall_forest",     mesh=mesh("wall_forest"))
 addon.add_static("hw_wall_forest_ew",  mesh=mesh("wall_forest_ew"))
 # Mine E/W wall (1080 GU)
 addon.add_static("hw_wall_mine_ew",    mesh=mesh("wall_mine_ew"))
-# Vending machine — interactive ACTI; MWScript opens vendor dialogue on click
+# Vending machine (hub) — interactive ACTI; MWScript opens vendor dialogue on click
 addon.add_activator("hw_vending_machine",
     name="The Vending Machine",
     mesh=mesh("vending_machine"),
     script="hw_vendor_script")
+
+# Garden herb collector — same model at 40 % scale; sells herbs for 5 g each via Lua
+addon.add_activator("hw_vending_machine_garden",
+    name="Herb Collector",
+    mesh=mesh("vending_machine"))
 
 
 # ===========================================================================
@@ -544,6 +549,9 @@ garden.place_light("hw_light_garden",  x=300,  y=240,  z=300)
 # Return door (south, leads back to Hub World — real DOOR record)
 garden.place_door("hw_door_return_garden", x=0, y=-540, z=0,
                   destination_cell="IdleMW", destination_pos=(0, 1020, 0))
+
+# Herb Collector — mini vending machine (40 % scale) just right of the entrance
+garden.place_activator("hw_vending_machine_garden", x=420, y=-500, z=0, scale=0.4)
 
 # Basil plants (5)
 BASIL_POS = [(-300, 180), (-60, 360), (150, 240), (270, -60), (-210, -180)]

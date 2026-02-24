@@ -35,46 +35,46 @@
         </technique>
       </profile_COMMON>
     </effect>
-    <effect id="Effect_leafA">
+    <effect id="Effect_leaf_lo">
       <profile_COMMON>
-        <newparam sid="surf_leafA">
+        <newparam sid="surf_leaf_lo">
           <surface type="2D">
             <init_from>img_textures_hw_white_dds</init_from>
           </surface>
         </newparam>
-        <newparam sid="samp_leafA">
+        <newparam sid="samp_leaf_lo">
           <sampler2D>
-            <source>surf_leafA</source>
+            <source>surf_leaf_lo</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
           <blinn>
             <emission><color sid="emission">0 0 0 1</color></emission>
             <ambient><color sid="ambient">0.14 0.66 0.1 1</color></ambient>
-            <diffuse><texture texture="samp_leafA" texcoord="CHANNEL1"/></diffuse>
+            <diffuse><texture texture="samp_leaf_lo" texcoord="CHANNEL1"/></diffuse>
             <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
             <shininess><float sid="shininess">20</float></shininess>
           </blinn>
         </technique>
       </profile_COMMON>
     </effect>
-    <effect id="Effect_leafB">
+    <effect id="Effect_leaf_hi">
       <profile_COMMON>
-        <newparam sid="surf_leafB">
+        <newparam sid="surf_leaf_hi">
           <surface type="2D">
             <init_from>img_textures_hw_white_dds</init_from>
           </surface>
         </newparam>
-        <newparam sid="samp_leafB">
+        <newparam sid="samp_leaf_hi">
           <sampler2D>
-            <source>surf_leafB</source>
+            <source>surf_leaf_hi</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
           <blinn>
             <emission><color sid="emission">0 0 0 1</color></emission>
             <ambient><color sid="ambient">0.14 0.66 0.1 1</color></ambient>
-            <diffuse><texture texture="samp_leafB" texcoord="CHANNEL1"/></diffuse>
+            <diffuse><texture texture="samp_leaf_hi" texcoord="CHANNEL1"/></diffuse>
             <specular><color sid="specular">0.1 0.1 0.1 1</color></specular>
             <shininess><float sid="shininess">20</float></shininess>
           </blinn>
@@ -86,18 +86,18 @@
     <material id="Mat_stem" name="stem">
       <instance_effect url="#Effect_stem"/>
     </material>
-    <material id="Mat_leafA" name="leafA">
-      <instance_effect url="#Effect_leafA"/>
+    <material id="Mat_leaf_lo" name="leaf_lo">
+      <instance_effect url="#Effect_leaf_lo"/>
     </material>
-    <material id="Mat_leafB" name="leafB">
-      <instance_effect url="#Effect_leafB"/>
+    <material id="Mat_leaf_hi" name="leaf_hi">
+      <instance_effect url="#Effect_leaf_hi"/>
     </material>
   </library_materials>
   <library_geometries>
     <geometry id="Geom_stem" name="stem">
       <mesh>
         <source id="Geom_stem-positions">
-          <float_array id="Geom_stem-positions-array" count="432">2 0 0 1.73205 1 0 1.73205 1 22 2 0 0 1.73205 1 22 2 0 22 0 0 0 1.73205 1 0 2 0 0 0 0 22 2 0 22 1.73205 1 22 1.73205 1 0 1 1.73205 0 1 1.73205 22 1.73205 1 0 1 1.73205 22 1.73205 1 22 0 0 0 1 1.73205 0 1.73205 1 0 0 0 22 1.73205 1 22 1 1.73205 22 1 1.73205 0 1.22465e-16 2 0 1.22465e-16 2 22 1 1.73205 0 1.22465e-16 2 22 1 1.73205 22 0 0 0 1.22465e-16 2 0 1 1.73205 0 0 0 22 1 1.73205 22 1.22465e-16 2 22 1.22465e-16 2 0 -1 1.73205 0 -1 1.73205 22 1.22465e-16 2 0 -1 1.73205 22 1.22465e-16 2 22 0 0 0 -1 1.73205 0 1.22465e-16 2 0 0 0 22 1.22465e-16 2 22 -1 1.73205 22 -1 1.73205 0 -1.73205 1 0 -1.73205 1 22 -1 1.73205 0 -1.73205 1 22 -1 1.73205 22 0 0 0 -1.73205 1 0 -1 1.73205 0 0 0 22 -1 1.73205 22 -1.73205 1 22 -1.73205 1 0 -2 2.44929e-16 0 -2 2.44929e-16 22 -1.73205 1 0 -2 2.44929e-16 22 -1.73205 1 22 0 0 0 -2 2.44929e-16 0 -1.73205 1 0 0 0 22 -1.73205 1 22 -2 2.44929e-16 22 -2 2.44929e-16 0 -1.73205 -1 0 -1.73205 -1 22 -2 2.44929e-16 0 -1.73205 -1 22 -2 2.44929e-16 22 0 0 0 -1.73205 -1 0 -2 2.44929e-16 0 0 0 22 -2 2.44929e-16 22 -1.73205 -1 22 -1.73205 -1 0 -1 -1.73205 0 -1 -1.73205 22 -1.73205 -1 0 -1 -1.73205 22 -1.73205 -1 22 0 0 0 -1 -1.73205 0 -1.73205 -1 0 0 0 22 -1.73205 -1 22 -1 -1.73205 22 -1 -1.73205 0 -3.67394e-16 -2 0 -3.67394e-16 -2 22 -1 -1.73205 0 -3.67394e-16 -2 22 -1 -1.73205 22 0 0 0 -3.67394e-16 -2 0 -1 -1.73205 0 0 0 22 -1 -1.73205 22 -3.67394e-16 -2 22 -3.67394e-16 -2 0 1 -1.73205 0 1 -1.73205 22 -3.67394e-16 -2 0 1 -1.73205 22 -3.67394e-16 -2 22 0 0 0 1 -1.73205 0 -3.67394e-16 -2 0 0 0 22 -3.67394e-16 -2 22 1 -1.73205 22 1 -1.73205 0 1.73205 -1 0 1.73205 -1 22 1 -1.73205 0 1.73205 -1 22 1 -1.73205 22 0 0 0 1.73205 -1 0 1 -1.73205 0 0 0 22 1 -1.73205 22 1.73205 -1 22 1.73205 -1 0 2 0 0 2 0 22 1.73205 -1 0 2 0 22 1.73205 -1 22 0 0 0 2 0 0 1.73205 -1 0 0 0 22 1.73205 -1 22 2 0 22</float_array>
+          <float_array id="Geom_stem-positions-array" count="432">5 0 0 4.33013 2.5 0 4.33013 2.5 90 5 0 0 4.33013 2.5 90 5 0 90 0 0 0 4.33013 2.5 0 5 0 0 0 0 90 5 0 90 4.33013 2.5 90 4.33013 2.5 0 2.5 4.33013 0 2.5 4.33013 90 4.33013 2.5 0 2.5 4.33013 90 4.33013 2.5 90 0 0 0 2.5 4.33013 0 4.33013 2.5 0 0 0 90 4.33013 2.5 90 2.5 4.33013 90 2.5 4.33013 0 3.06162e-16 5 0 3.06162e-16 5 90 2.5 4.33013 0 3.06162e-16 5 90 2.5 4.33013 90 0 0 0 3.06162e-16 5 0 2.5 4.33013 0 0 0 90 2.5 4.33013 90 3.06162e-16 5 90 3.06162e-16 5 0 -2.5 4.33013 0 -2.5 4.33013 90 3.06162e-16 5 0 -2.5 4.33013 90 3.06162e-16 5 90 0 0 0 -2.5 4.33013 0 3.06162e-16 5 0 0 0 90 3.06162e-16 5 90 -2.5 4.33013 90 -2.5 4.33013 0 -4.33013 2.5 0 -4.33013 2.5 90 -2.5 4.33013 0 -4.33013 2.5 90 -2.5 4.33013 90 0 0 0 -4.33013 2.5 0 -2.5 4.33013 0 0 0 90 -2.5 4.33013 90 -4.33013 2.5 90 -4.33013 2.5 0 -5 6.12323e-16 0 -5 6.12323e-16 90 -4.33013 2.5 0 -5 6.12323e-16 90 -4.33013 2.5 90 0 0 0 -5 6.12323e-16 0 -4.33013 2.5 0 0 0 90 -4.33013 2.5 90 -5 6.12323e-16 90 -5 6.12323e-16 0 -4.33013 -2.5 0 -4.33013 -2.5 90 -5 6.12323e-16 0 -4.33013 -2.5 90 -5 6.12323e-16 90 0 0 0 -4.33013 -2.5 0 -5 6.12323e-16 0 0 0 90 -5 6.12323e-16 90 -4.33013 -2.5 90 -4.33013 -2.5 0 -2.5 -4.33013 0 -2.5 -4.33013 90 -4.33013 -2.5 0 -2.5 -4.33013 90 -4.33013 -2.5 90 0 0 0 -2.5 -4.33013 0 -4.33013 -2.5 0 0 0 90 -4.33013 -2.5 90 -2.5 -4.33013 90 -2.5 -4.33013 0 -9.18485e-16 -5 0 -9.18485e-16 -5 90 -2.5 -4.33013 0 -9.18485e-16 -5 90 -2.5 -4.33013 90 0 0 0 -9.18485e-16 -5 0 -2.5 -4.33013 0 0 0 90 -2.5 -4.33013 90 -9.18485e-16 -5 90 -9.18485e-16 -5 0 2.5 -4.33013 0 2.5 -4.33013 90 -9.18485e-16 -5 0 2.5 -4.33013 90 -9.18485e-16 -5 90 0 0 0 2.5 -4.33013 0 -9.18485e-16 -5 0 0 0 90 -9.18485e-16 -5 90 2.5 -4.33013 90 2.5 -4.33013 0 4.33013 -2.5 0 4.33013 -2.5 90 2.5 -4.33013 0 4.33013 -2.5 90 2.5 -4.33013 90 0 0 0 4.33013 -2.5 0 2.5 -4.33013 0 0 0 90 2.5 -4.33013 90 4.33013 -2.5 90 4.33013 -2.5 0 5 0 0 5 0 90 4.33013 -2.5 0 5 0 90 4.33013 -2.5 90 0 0 0 5 0 0 4.33013 -2.5 0 0 0 90 4.33013 -2.5 90 5 0 90</float_array>
           <technique_common>
             <accessor source="#Geom_stem-positions-array" count="144" stride="3">
               <param name="X" type="float"/>
@@ -136,86 +136,86 @@
         </triangles>
       </mesh>
     </geometry>
-    <geometry id="Geom_leafA" name="leafA">
+    <geometry id="Geom_leaf_lo" name="leaf_lo">
       <mesh>
-        <source id="Geom_leafA-positions">
-          <float_array id="Geom_leafA-positions-array" count="108">-12 2 18 12 2 18 12 -2 18 -12 2 18 12 -2 18 -12 -2 18 -12 -2 23 12 -2 23 12 2 23 -12 -2 23 12 2 23 -12 2 23 -12 -2 18 12 -2 18 12 -2 23 -12 -2 18 12 -2 23 -12 -2 23 12 2 18 -12 2 18 -12 2 23 12 2 18 -12 2 23 12 2 23 -12 -2 18 -12 -2 23 -12 2 23 -12 -2 18 -12 2 23 -12 2 18 12 2 18 12 2 23 12 -2 23 12 2 18 12 -2 23 12 -2 18</float_array>
+        <source id="Geom_leaf_lo-positions">
+          <float_array id="Geom_leaf_lo-positions-array" count="108">-25 6 30 25 6 30 25 -6 30 -25 6 30 25 -6 30 -25 -6 30 -25 -6 44 25 -6 44 25 6 44 -25 -6 44 25 6 44 -25 6 44 -25 -6 30 25 -6 30 25 -6 44 -25 -6 30 25 -6 44 -25 -6 44 25 6 30 -25 6 30 -25 6 44 25 6 30 -25 6 44 25 6 44 -25 -6 30 -25 -6 44 -25 6 44 -25 -6 30 -25 6 44 -25 6 30 25 6 30 25 6 44 25 -6 44 25 6 30 25 -6 44 25 -6 30</float_array>
           <technique_common>
-            <accessor source="#Geom_leafA-positions-array" count="36" stride="3">
+            <accessor source="#Geom_leaf_lo-positions-array" count="36" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Geom_leafA-normals">
-          <float_array id="Geom_leafA-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+        <source id="Geom_leaf_lo-normals">
+          <float_array id="Geom_leaf_lo-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
           <technique_common>
-            <accessor source="#Geom_leafA-normals-array" count="12" stride="3">
+            <accessor source="#Geom_leaf_lo-normals-array" count="12" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Geom_leafA-texcoords">
-          <float_array id="Geom_leafA-texcoords-array" count="2">0 0</float_array>
+        <source id="Geom_leaf_lo-texcoords">
+          <float_array id="Geom_leaf_lo-texcoords-array" count="2">0 0</float_array>
           <technique_common>
-            <accessor source="#Geom_leafA-texcoords-array" count="1" stride="2">
+            <accessor source="#Geom_leaf_lo-texcoords-array" count="1" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <vertices id="Geom_leafA-vertices">
-          <input semantic="POSITION" source="#Geom_leafA-positions"/>
+        <vertices id="Geom_leaf_lo-vertices">
+          <input semantic="POSITION" source="#Geom_leaf_lo-positions"/>
         </vertices>
-        <triangles count="12" material="leafA">
-          <input semantic="VERTEX"   source="#Geom_leafA-vertices"  offset="0"/>
-          <input semantic="NORMAL"   source="#Geom_leafA-normals"   offset="1"/>
-          <input semantic="TEXCOORD" source="#Geom_leafA-texcoords" offset="2" set="0"/>
+        <triangles count="12" material="leaf_lo">
+          <input semantic="VERTEX"   source="#Geom_leaf_lo-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_leaf_lo-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_leaf_lo-texcoords" offset="2" set="0"/>
           <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
         </triangles>
       </mesh>
     </geometry>
-    <geometry id="Geom_leafB" name="leafB">
+    <geometry id="Geom_leaf_hi" name="leaf_hi">
       <mesh>
-        <source id="Geom_leafB-positions">
-          <float_array id="Geom_leafB-positions-array" count="108">-2 12 18 2 12 18 2 -12 18 -2 12 18 2 -12 18 -2 -12 18 -2 -12 23 2 -12 23 2 12 23 -2 -12 23 2 12 23 -2 12 23 -2 -12 18 2 -12 18 2 -12 23 -2 -12 18 2 -12 23 -2 -12 23 2 12 18 -2 12 18 -2 12 23 2 12 18 -2 12 23 2 12 23 -2 -12 18 -2 -12 23 -2 12 23 -2 -12 18 -2 12 23 -2 12 18 2 12 18 2 12 23 2 -12 23 2 12 18 2 -12 23 2 -12 18</float_array>
+        <source id="Geom_leaf_hi-positions">
+          <float_array id="Geom_leaf_hi-positions-array" count="108">-6 25 60 6 25 60 6 -25 60 -6 25 60 6 -25 60 -6 -25 60 -6 -25 74 6 -25 74 6 25 74 -6 -25 74 6 25 74 -6 25 74 -6 -25 60 6 -25 60 6 -25 74 -6 -25 60 6 -25 74 -6 -25 74 6 25 60 -6 25 60 -6 25 74 6 25 60 -6 25 74 6 25 74 -6 -25 60 -6 -25 74 -6 25 74 -6 -25 60 -6 25 74 -6 25 60 6 25 60 6 25 74 6 -25 74 6 25 60 6 -25 74 6 -25 60</float_array>
           <technique_common>
-            <accessor source="#Geom_leafB-positions-array" count="36" stride="3">
+            <accessor source="#Geom_leaf_hi-positions-array" count="36" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Geom_leafB-normals">
-          <float_array id="Geom_leafB-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
+        <source id="Geom_leaf_hi-normals">
+          <float_array id="Geom_leaf_hi-normals-array" count="36">0 0 -1 0 0 -1 0 0 1 0 0 1 0 -1 0 0 -1 0 0 1 0 0 1 -0 -1 0 0 -1 0 0 1 0 -0 1 0 0</float_array>
           <technique_common>
-            <accessor source="#Geom_leafB-normals-array" count="12" stride="3">
+            <accessor source="#Geom_leaf_hi-normals-array" count="12" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Geom_leafB-texcoords">
-          <float_array id="Geom_leafB-texcoords-array" count="2">0 0</float_array>
+        <source id="Geom_leaf_hi-texcoords">
+          <float_array id="Geom_leaf_hi-texcoords-array" count="2">0 0</float_array>
           <technique_common>
-            <accessor source="#Geom_leafB-texcoords-array" count="1" stride="2">
+            <accessor source="#Geom_leaf_hi-texcoords-array" count="1" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <vertices id="Geom_leafB-vertices">
-          <input semantic="POSITION" source="#Geom_leafB-positions"/>
+        <vertices id="Geom_leaf_hi-vertices">
+          <input semantic="POSITION" source="#Geom_leaf_hi-positions"/>
         </vertices>
-        <triangles count="12" material="leafB">
-          <input semantic="VERTEX"   source="#Geom_leafB-vertices"  offset="0"/>
-          <input semantic="NORMAL"   source="#Geom_leafB-normals"   offset="1"/>
-          <input semantic="TEXCOORD" source="#Geom_leafB-texcoords" offset="2" set="0"/>
+        <triangles count="12" material="leaf_hi">
+          <input semantic="VERTEX"   source="#Geom_leaf_hi-vertices"  offset="0"/>
+          <input semantic="NORMAL"   source="#Geom_leaf_hi-normals"   offset="1"/>
+          <input semantic="TEXCOORD" source="#Geom_leaf_hi-texcoords" offset="2" set="0"/>
           <p>0 0 0 1 0 0 2 0 0 3 1 0 4 1 0 5 1 0 6 2 0 7 2 0 8 2 0 9 3 0 10 3 0 11 3 0 12 4 0 13 4 0 14 4 0 15 5 0 16 5 0 17 5 0 18 6 0 19 6 0 20 6 0 21 7 0 22 7 0 23 7 0 24 8 0 25 8 0 26 8 0 27 9 0 28 9 0 29 9 0 30 10 0 31 10 0 32 10 0 33 11 0 34 11 0 35 11 0</p>
         </triangles>
       </mesh>
@@ -234,22 +234,22 @@
           </bind_material>
         </instance_geometry>
       </node>
-      <node id="Node_leafA" name="leafA" type="NODE">
-        <instance_geometry url="#Geom_leafA">
+      <node id="Node_leaf_lo" name="leaf_lo" type="NODE">
+        <instance_geometry url="#Geom_leaf_lo">
           <bind_material>
             <technique_common>
-              <instance_material symbol="leafA" target="#Mat_leafA">
+              <instance_material symbol="leaf_lo" target="#Mat_leaf_lo">
                 <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>
           </bind_material>
         </instance_geometry>
       </node>
-      <node id="Node_leafB" name="leafB" type="NODE">
-        <instance_geometry url="#Geom_leafB">
+      <node id="Node_leaf_hi" name="leaf_hi" type="NODE">
+        <instance_geometry url="#Geom_leaf_hi">
           <bind_material>
             <technique_common>
-              <instance_material symbol="leafB" target="#Mat_leafB">
+              <instance_material symbol="leaf_hi" target="#Mat_leaf_hi">
                 <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>

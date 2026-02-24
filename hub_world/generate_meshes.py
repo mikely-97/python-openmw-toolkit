@@ -502,11 +502,16 @@ def out(filename: str):
 # ===========================================================================
 
 def build_plant_herb():
-    """Herb plant: thin stem + cross of flat leaf blades (not a mushroom cap)."""
+    """Herb plant — tall enough for the interact raycast to hit reliably.
+
+    Previous mesh (23 GU tall, 4-GU-wide leaves) was invisible to the raycast
+    at player eye-level (~130 GU).  This version reaches 90 GU with wide cross
+    leaves at two heights, giving a solid click target.
+    """
     return [
-        SubMesh("stem",  0.22, 0.48, 0.08).cylinder(radius=2, height=22),
-        SubMesh("leafA", 0.14, 0.66, 0.10).box(24, 4, 5, oz=18),   # E-W blade
-        SubMesh("leafB", 0.14, 0.66, 0.10).box(4, 24, 5, oz=18),   # N-S blade
+        SubMesh("stem",    0.22, 0.48, 0.08).cylinder(radius=5, height=90),
+        SubMesh("leaf_lo", 0.14, 0.66, 0.10).box(50, 12, 14, oz=30),  # lower fan
+        SubMesh("leaf_hi", 0.14, 0.66, 0.10).box(12, 50, 14, oz=60),  # upper fan
     ]
 
 
