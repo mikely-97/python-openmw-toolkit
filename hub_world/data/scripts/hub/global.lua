@@ -141,31 +141,6 @@ local WEAPON_POWER = {
 
 
 
--- Anvil crafting recipes
-local ANVIL_RECIPES = {
-    {
-        label   = "Wooden Axe (1 log + 2 branches)",
-        needs   = { hw_log=1, hw_branch=2 },
-        consumes= { {"hw_log",1}, {"hw_branch",2} },
-        produces= "hw_axe_wooden_craft",
-        fail_waste = { {"hw_branch",1} },
-    },
-    {
-        label   = "Iron Pickaxe (3 ingots)",
-        needs   = { hw_iron_ingot=3 },
-        consumes= { {"hw_iron_ingot",3} },
-        produces= "hw_pickaxe_iron",
-        fail_waste = { {"hw_iron_ingot",1} },
-    },
-    {
-        label   = "Wooden Instrument (2 logs + 3 branches)",
-        needs   = { hw_log=2, hw_branch=3 },
-        consumes= { {"hw_log",2}, {"hw_branch",3} },
-        produces= "hw_instrument_wood",
-        fail_waste = { {"hw_branch",1} },
-    },
-}
-
 -- ---------------------------------------------------------------------------
 -- Helpers
 -- ---------------------------------------------------------------------------
@@ -469,77 +444,6 @@ local function handleBed(actor)
 end
 
 -- ---------------------------------------------------------------------------
--- Anvil crafting
--- ---------------------------------------------------------------------------
-
-local function handleAnvil(actor)
-    local inv        = types.Actor.inventory(actor)
-    local repSkill   = getSkill(actor, "repair")
-
-    for _, recipe in ipairs(ANVIL_RECIPES) do
-        local ok = true
-        for itemId, needed in pairs(recipe.needs) do
-            if inv:countOf(itemId) < needed then
-                ok = false
-                break
-            end
-        end
-
-        if ok then
-            local successChance = math.min(0.97, 0.35 + (repSkill / 100) * 0.62)
-            trainSkill(actor, "repair", 0.1)
-
-            if math.random() < successChance then
-                for _, pair in ipairs(recipe.consumes) do
-                    takeItem(actor, pair[1], pair[2])
-                end
-                giveItem(actor, recipe.produces, 1)
-                sendMsg(actor,
-                    "You craft: " .. recipe.produces:gsub("hw_", ""):gsub("_", " ")
-                    .. "!  (Repair skill: " .. math.floor(repSkill) .. ")")
-            else
-                for _, pair in ipairs(recipe.fail_waste) do
-                    takeItem(actor, pair[1], pair[2])
-                end
-                sendMsg(actor,
-                    "Crafting failed - you waste some materials. "
-                    .. "(Repair skill: " .. math.floor(repSkill)
-                    .. " / chance " .. math.floor(successChance * 100) .. "%)")
-            end
-            return
-        end
-    end
-
-    sendMsg(actor,
-        "Crafting options: "
-        .. "Wooden Axe (1 log + 2 branches)  |  "
-        .. "Iron Pickaxe (3 ingots)  |  "
-        .. "Wooden Instrument (2 logs + 3 branches).  "
-        .. "You don't have the required materials.")
-end
-
--- ---------------------------------------------------------------------------
--- Forge smelting
--- ---------------------------------------------------------------------------
-
-local function handleForge(actor)
-    local inv    = types.Actor.inventory(actor)
-    local oreAmt = inv:countOf("hw_iron_ore")
-
-    if oreAmt >= 2 then
-        local batches = math.min(math.floor(oreAmt / 2), 5)
-        takeItem(actor, "hw_iron_ore", batches * 2)
-        giveItem(actor, "hw_iron_ingot", batches)
-        trainSkill(actor, "repair", 0.05 * batches)
-        sendMsg(actor,
-            "You smelt " .. (batches * 2) .. " ore into " .. batches .. " ingot(s).")
-    else
-        sendMsg(actor,
-            "You need at least 2 iron ore to smelt. (Have: " .. oreAmt .. ")")
-    end
-end
-
--- ---------------------------------------------------------------------------
 -- Garden herb collector (mini vending machine)
 -- Buys all herbs from the player at 5 gold each.
 -- ---------------------------------------------------------------------------
@@ -618,10 +522,6 @@ local function onHW_Activate(data)
             handleMineral(rid, oid, actor)
         elseif rid == "hw_bed" then
             handleBed(actor)
-        elseif rid == "hw_anvil" then
-            handleAnvil(actor)
-        elseif rid == "hw_forge" then
-            handleForge(actor)
         elseif rid == "hw_mine_refresh_station" then
             handleMineRefresh(actor)
         elseif rid == "hw_vending_machine_garden" then

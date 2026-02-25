@@ -8,6 +8,8 @@ Receives events from the GLOBAL script:
       N > 0  : seconds remaining (shown as MM:SS in yellow)
       N == 0 : all plants ready  (shown as "Ready!" in green)
       N < 0  : player not in garden (hide the widget)
+
+Crafting and smelting are handled by NPC dialogue (The Smith / The Smelter).
 ]]
 
 local ui   = require('openmw.ui')

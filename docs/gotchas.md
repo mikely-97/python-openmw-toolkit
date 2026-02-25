@@ -100,6 +100,14 @@
 
 - **Use the Flatpak OpenMW**, not the system package. System package ships an `osgdb_dae.so` incompatible with OpenMW 0.50's VFS — every `.dae` fails.
 
+## Lua UI Limitations
+
+- **`ui.TYPE.Window` chrome does not render reliably** — frame, title bar, and close button may be invisible. Content (Text/Flex children) renders as a floating overlay with no background or border.
+
+- **Mouse events do not fire during gameplay** — `events = { mouseClick = ... }` on `ui.TYPE.Widget` requires the cursor to be visible. In normal gameplay the cursor is captured by the camera. Reliable pattern: **keyboard-driven menus** using `onKeyPress` in the PLAYER `engineHandlers`. Use digit keys 1-N to select, Escape/0 to close.
+
+- **`ui.TYPE.Window` is not the MyGUI barter/dialog window** — barter, dialogue, inventory etc. are native engine windows, not replicable from Lua. `ui.TYPE.Window` is a Lua overlay widget only.
+
 ## Known Non-Fatal Example Suite Warnings
 
 Pre-existing, don't try to fix:

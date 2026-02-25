@@ -18,6 +18,22 @@ Run with `poetry run <cmd>` or activate `.venv/`.
 | Write MWScript, configure openmw.cfg / settings.cfg | [docs/mwscript-cfg.md](docs/mwscript-cfg.md) |
 | Diagnose a bug or avoid known pitfalls | [docs/gotchas.md](docs/gotchas.md) |
 
+## Hub World addon editing rule
+
+**Never re-run `build.py` for hub_world.** It regenerates from scratch and overwrites manual changes to the binary.
+Patch `hub_world/hub_world.omwaddon` directly using the tes3 reader/writer:
+
+```python
+import sys; sys.path.insert(0, ".")
+from tes3.reader import read_file
+from tes3.writer import write_file
+records = read_file("hub_world/hub_world.omwaddon")
+# ... mutate records ...
+write_file(records, "hub_world/hub_world.omwaddon")
+```
+
+Lua files (`hub_world/data/scripts/hub/`) are loose files — edit directly and `reloadlua` in-game.
+
 ## Quickstart
 
 ```bash
