@@ -153,29 +153,87 @@
       </mesh>
     </geometry>
   </library_geometries>
+  <!--
+    Static creature animations for OpenMW.
+    Node_root/transform is held at the identity matrix for the full 3-second
+    span.  Three named clips carve it into idle / hit1 / death1 so that
+    OpenMW's CREA animation state machine finds each expected sequence name
+    without any visible movement on the mesh.
+  -->
+  <library_animations>
+    <animation id="Anim_root">
+      <source id="Anim_root-input">
+        <float_array id="Anim_root-input-array" count="4">0 1 2 3</float_array>
+        <technique_common>
+          <accessor source="#Anim_root-input-array" count="4" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Anim_root-output">
+        <float_array id="Anim_root-output-array" count="64">
+          1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+          1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+          1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+          1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1
+        </float_array>
+        <technique_common>
+          <accessor source="#Anim_root-output-array" count="4" stride="16">
+            <param name="TRANSFORM" type="float4x4"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Anim_root-interpolation">
+        <Name_array id="Anim_root-interpolation-array" count="4">LINEAR LINEAR LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#Anim_root-interpolation-array" count="4" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Anim_root-sampler">
+        <input semantic="INPUT"         source="#Anim_root-input"/>
+        <input semantic="OUTPUT"        source="#Anim_root-output"/>
+        <input semantic="INTERPOLATION" source="#Anim_root-interpolation"/>
+      </sampler>
+      <channel source="#Anim_root-sampler" target="Node_root/transform"/>
+    </animation>
+  </library_animations>
+  <library_animation_clips>
+    <!-- idle: t=0–1 (looped while standing still) -->
+    <animation_clip id="idle"   name="idle"   start="0" end="1"/>
+    <!-- hit1: t=1–2 (played when struck by weapon) -->
+    <animation_clip id="hit1"   name="hit1"   start="1" end="2"/>
+    <!-- death1: t=2–3 (played on death / felled) -->
+    <animation_clip id="death1" name="death1" start="2" end="3"/>
+  </library_animation_clips>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
-      <node id="Node_trunk" name="trunk" type="NODE">
-        <instance_geometry url="#Geom_trunk">
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="trunk" target="#Mat_trunk">
-                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
-              </instance_material>
-            </technique_common>
-          </bind_material>
-        </instance_geometry>
-      </node>
-      <node id="Node_canopy" name="canopy" type="NODE">
-        <instance_geometry url="#Geom_canopy">
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="canopy" target="#Mat_canopy">
-                <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
-              </instance_material>
-            </technique_common>
-          </bind_material>
-        </instance_geometry>
+      <!-- Node_root is the animation target; identity matrix = no transform. -->
+      <node id="Node_root" name="root" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <node id="Node_trunk" name="trunk" type="NODE">
+          <instance_geometry url="#Geom_trunk">
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="trunk" target="#Mat_trunk">
+                  <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+                </instance_material>
+              </technique_common>
+            </bind_material>
+          </instance_geometry>
+        </node>
+        <node id="Node_canopy" name="canopy" type="NODE">
+          <instance_geometry url="#Geom_canopy">
+            <bind_material>
+              <technique_common>
+                <instance_material symbol="canopy" target="#Mat_canopy">
+                  <bind_vertex_input semantic="CHANNEL1" input_semantic="TEXCOORD" input_set="0"/>
+                </instance_material>
+              </technique_common>
+            </bind_material>
+          </instance_geometry>
+        </node>
       </node>
     </visual_scene>
   </library_visual_scenes>

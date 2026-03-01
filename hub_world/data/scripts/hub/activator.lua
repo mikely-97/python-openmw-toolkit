@@ -14,38 +14,20 @@ local self_m = require('openmw.self')
 local core   = require('openmw.core')
 local types  = require('openmw.types')
 
--- Set of all Hub World activator recordIds this script cares about
+-- Set of Hub World ACTI recordIds that are actually placed in cells.
+-- Trees and mineral deposits are now NPC_/CREA — combat-based, not listed here.
+-- Doors are now native DOOR records — engine handles teleportation directly.
 local HW_IDS = {
-    -- Garden plants
-    hw_plant_basil_01=true, hw_plant_basil_02=true, hw_plant_basil_03=true,
-    hw_plant_basil_04=true, hw_plant_basil_05=true,
-    hw_plant_mint_01=true,  hw_plant_mint_02=true,  hw_plant_mint_03=true,
-    hw_plant_mint_04=true,  hw_plant_mint_05=true,
-    -- Forest mushrooms
-    hw_mushroom_heal_01=true, hw_mushroom_heal_02=true,
-    hw_mushroom_heal_03=true, hw_mushroom_heal_04=true,
-    hw_mushroom_vigor_01=true,hw_mushroom_vigor_02=true,
-    hw_mushroom_vigor_03=true,hw_mushroom_vigor_04=true,
-    -- Forest trees
-    hw_tree_01=true, hw_tree_02=true, hw_tree_03=true,
-    hw_tree_04=true, hw_tree_05=true, hw_tree_06=true,
-    -- Mine minerals
-    hw_mineral_iron_01=true, hw_mineral_iron_02=true,
-    hw_mineral_iron_03=true, hw_mineral_iron_04=true,
-    hw_mineral_iron_05=true, hw_mineral_iron_06=true,
-    hw_mineral_iron_07=true, hw_mineral_iron_08=true,
-    hw_mineral_stone_01=true,hw_mineral_stone_02=true,
-    hw_mineral_stone_03=true,hw_mineral_stone_04=true,
-    -- Stations
-    hw_bed=true, hw_anvil=true, hw_forge=true,
-    hw_mine_refresh_station=true,
-    -- Garden herb collector (mini vending machine)
-    hw_vending_machine_garden=true,
-    -- Doors (only ACTI doors — garden uses real DOOR records handled by engine)
-    hw_door_forest=true,
-    hw_door_mine=true,
-    hw_door_return_forest=true,
-    hw_door_return_mine=true,
+    -- Garden plants (single record, 5 instances each)
+    hw_plant_basil_01 = true,
+    hw_plant_mint_01  = true,
+    -- Forest mushrooms (single record, 4 instances each)
+    hw_mushroom_heal_01  = true,
+    hw_mushroom_vigor_01 = true,
+    -- Hub stations
+    hw_bed                    = true,
+    hw_mine_refresh_station   = true,
+    hw_vending_machine_garden = true,
 }
 
 local function onActivate(actor)

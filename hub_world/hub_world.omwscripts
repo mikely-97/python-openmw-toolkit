@@ -10,3 +10,4 @@
 GLOBAL:    scripts/hub/global.lua
 PLAYER:    scripts/hub/player.lua
 ACTIVATOR: scripts/hub/activator.lua
+CREATURE:  scripts/hub/creature.lua

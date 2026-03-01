@@ -68,75 +68,21 @@ local PLANT_RESPAWN_REAL = 5     -- seconds until a harvested garden plant reapp
 local PLANT_RESPAWN_GAME = 9000  -- ≈5 min at timescale 30 (storage cooldown)
 
 local PLANT_DISPLAY_NAMES = {
-    hw_plant_basil = "Garden Basil",
-    hw_plant_mint  = "Garden Mint",
+    hw_plant_basil    = "Garden Basil",
+    hw_plant_mint     = "Garden Mint",
+    hw_mushroom_heal  = "Heal Mushroom",
+    hw_mushroom_vigor = "Vigor Mushroom",
 }
 
--- Items granted by each harvestable activator recordId
+-- Items granted by each harvestable activator recordId.
+-- Trees and mineral deposits are now CREA/NPC_ objects — combat-based, no entry here.
 local HARVEST_CFG = {
-    -- plants (Garden)
+    -- Garden plants (single record, multiple instances placed in cell)
     hw_plant_basil_01 = { item="hw_herb_basil" },
-    hw_plant_basil_02 = { item="hw_herb_basil" },
-    hw_plant_basil_03 = { item="hw_herb_basil" },
-    hw_plant_basil_04 = { item="hw_herb_basil" },
-    hw_plant_basil_05 = { item="hw_herb_basil" },
     hw_plant_mint_01  = { item="hw_herb_mint"  },
-    hw_plant_mint_02  = { item="hw_herb_mint"  },
-    hw_plant_mint_03  = { item="hw_herb_mint"  },
-    hw_plant_mint_04  = { item="hw_herb_mint"  },
-    hw_plant_mint_05  = { item="hw_herb_mint"  },
-    -- mushrooms (Forest)
-    hw_mushroom_heal_01 = { item="hw_mushroom_heal", respawn=24*SECS_PER_HOUR },
-    hw_mushroom_heal_02 = { item="hw_mushroom_heal", respawn=24*SECS_PER_HOUR },
-    hw_mushroom_heal_03 = { item="hw_mushroom_heal", respawn=24*SECS_PER_HOUR },
-    hw_mushroom_heal_04 = { item="hw_mushroom_heal", respawn=24*SECS_PER_HOUR },
-    hw_mushroom_vigor_01= { item="hw_mushroom_vigor",respawn=24*SECS_PER_HOUR },
-    hw_mushroom_vigor_02= { item="hw_mushroom_vigor",respawn=24*SECS_PER_HOUR },
-    hw_mushroom_vigor_03= { item="hw_mushroom_vigor",respawn=24*SECS_PER_HOUR },
-    hw_mushroom_vigor_04= { item="hw_mushroom_vigor",respawn=24*SECS_PER_HOUR },
-}
-
-local TREE_CFG = {
-    hw_tree_01 = { base_hp=5, respawn=7*24*SECS_PER_HOUR },
-    hw_tree_02 = { base_hp=5, respawn=7*24*SECS_PER_HOUR },
-    hw_tree_03 = { base_hp=6, respawn=7*24*SECS_PER_HOUR },
-    hw_tree_04 = { base_hp=5, respawn=7*24*SECS_PER_HOUR },
-    hw_tree_05 = { base_hp=7, respawn=7*24*SECS_PER_HOUR },
-    hw_tree_06 = { base_hp=8, respawn=7*24*SECS_PER_HOUR },
-}
-
-local MINERAL_CFG = {
-    hw_mineral_iron_01 = { item="hw_iron_ore" },
-    hw_mineral_iron_02 = { item="hw_iron_ore" },
-    hw_mineral_iron_03 = { item="hw_iron_ore" },
-    hw_mineral_iron_04 = { item="hw_iron_ore" },
-    hw_mineral_iron_05 = { item="hw_iron_ore" },
-    hw_mineral_iron_06 = { item="hw_iron_ore" },
-    hw_mineral_iron_07 = { item="hw_iron_ore" },
-    hw_mineral_iron_08 = { item="hw_iron_ore" },
-    hw_mineral_stone_01= { item="hw_stone"    },
-    hw_mineral_stone_02= { item="hw_stone"    },
-    hw_mineral_stone_03= { item="hw_stone"    },
-    hw_mineral_stone_04= { item="hw_stone"    },
-}
-
--- Weapons considered axes (Axe skill) for tree-chopping
-local AXE_IDS = {
-    hw_axe_wooden=true, hw_axe_iron=true, hw_axe_wooden_craft=true
-}
-
--- Weapons considered pickaxes (Blunt skill) for mining
-local PICKAXE_IDS = {
-    hw_pickaxe_basic=true, hw_pickaxe_iron=true
-}
-
--- Weapon quality multipliers for damage calculation
-local WEAPON_POWER = {
-    hw_axe_wooden       = 1.0,
-    hw_axe_wooden_craft = 1.6,
-    hw_axe_iron         = 2.5,
-    hw_pickaxe_basic    = 1.0,
-    hw_pickaxe_iron     = 2.0,
+    -- Forest mushrooms
+    hw_mushroom_heal_01  = { item="hw_mushroom_heal",  respawn=24*SECS_PER_HOUR },
+    hw_mushroom_vigor_01 = { item="hw_mushroom_vigor", respawn=24*SECS_PER_HOUR },
 }
 
 
@@ -173,18 +119,6 @@ local function takeItem(actor, id, count)
         local stack = types.Actor.inventory(actor):find(id)
         if stack then stack:remove(count or 1) end
     end)
-end
-
-local function getEquippedWeaponId(actor)
-    local equip = types.Actor.getEquipment(actor)
-    local slot = types.Actor.EQUIPMENT_SLOT
-        and (types.Actor.EQUIPMENT_SLOT.CarriedRight or 13)
-        or 13
-    local stack = equip[slot]
-    if stack and stack.object then
-        return stack.object.recordId
-    end
-    return nil
 end
 
 local function getSkill(actor, skillName)
@@ -238,9 +172,10 @@ local function recreatePlant(info)
     end
 end
 
--- Friendly display name for a garden plant recordId.
+-- Friendly display name for a harvestable activator recordId.
+-- Strips trailing _01/_02 instance suffix, looks up in display names table.
 local function getPlantDisplayName(rid)
-    local base = rid:match("^(hw_plant_%a+)_%d+$")
+    local base = rid:match("^(hw_%a+_%a+)_%d+$") or rid:match("^(hw_%a+)_%d+$")
     return PLANT_DISPLAY_NAMES[base] or rid:gsub("_", " ")
 end
 
@@ -265,30 +200,30 @@ local function handlePlant(recordId, actor, worldObject)
     local cfg = HARVEST_CFG[recordId]
     if not cfg then return end
 
-    local isGardenPlant = (recordId:find("^hw_plant_") ~= nil)
-
-    -- Guard: prevent double-harvest while plant is hidden / on respawn timer.
-    -- (plant is still technically activatable at scale 0.001)
-    if isGardenPlant then
-        local existing = plant_objects[recordId]
-        if existing and not existing.shown then
-            sendMsg(actor, "This plant has not grown back yet.")
-            return
+    -- All harvestable activators use position-keyed instance tracking (many-1
+    -- pattern: multiple cell instances share one recordId).
+    local pos, cell_name, posKey
+    if worldObject then
+        pcall(function()
+            pos       = worldObject.position
+            cell_name = worldObject.cell and worldObject.cell.name or ""
+        end)
+        if pos then
+            posKey = string.format("%.0f_%.0f_%.0f", pos.x, pos.y, pos.z)
+            local existing = plant_objects[posKey]
+            if existing and not existing.shown then
+                sendMsg(actor, "This plant has not grown back yet.")
+                return
+            end
         end
     end
 
     -- Grant ingredient
     giveItem(actor, cfg.item, 1)
 
-    -- Garden plants: remove from world and start real-time respawn timer.
-    -- Mushrooms (forest) don't hide — they just give an item with a storage cooldown.
-    if isGardenPlant and worldObject then
-        local pos, cell_name
-        pcall(function()
-            pos       = worldObject.position
-            cell_name = worldObject.cell and worldObject.cell.name or ""
-        end)
-        plant_objects[recordId] = {
+    -- Remove from world and start real-time respawn timer.
+    if worldObject and posKey then
+        plant_objects[posKey] = {
             recordId = recordId,
             position = pos,
             cellName = cell_name,
@@ -296,117 +231,9 @@ local function handlePlant(recordId, actor, worldObject)
             shown    = false,
         }
         hideObject(worldObject, actor)
-    elseif not isGardenPlant then
-        -- Mushrooms: use storage cooldown (game-time, safe via getGameTime())
-        local now = getGameTime()
-        local key = "harvest_" .. recordId
-        G:set(key, now + (cfg.respawn or SECS_PER_HOUR * 24))
     end
 
-    local displayName = isGardenPlant
-        and getPlantDisplayName(recordId)
-        or (cfg.item:gsub("hw_", ""):gsub("_", " "))
-    sendMsg(actor, "You have successfully harvested " .. displayName .. ".")
-end
-
--- ---------------------------------------------------------------------------
--- Tree chopping
--- ---------------------------------------------------------------------------
-
-local function handleTree(recordId, objectId, actor)
-    local cfg = TREE_CFG[recordId]
-    if not cfg then return end
-
-    local now  = getGameTime()
-    local readyKey = "tree_ready_" .. objectId
-    local readyAt  = G:get(readyKey) or 0
-
-    if now < readyAt then
-        local daysLeft = math.ceil((readyAt - now) / (24 * SECS_PER_HOUR))
-        sendMsg(actor, "This tree has not grown back yet. (~" .. daysLeft .. " day(s) remaining)")
-        return
-    end
-
-    local wpnId = getEquippedWeaponId(actor)
-    if not wpnId or not AXE_IDS[wpnId] then
-        sendMsg(actor, "You need an axe equipped to chop this tree.")
-        return
-    end
-
-    local axeSkill = getSkill(actor, "axe")
-    local power    = WEAPON_POWER[wpnId] or 1.0
-    local damage   = math.max(1, math.floor(axeSkill * 0.08 + power))
-
-    local hpKey = "tree_hp_" .. objectId
-    local hp    = G:get(hpKey) or cfg.base_hp
-
-    hp = hp - damage
-    trainSkill(actor, "axe", 0.05)
-
-    if hp <= 0 then
-        local logs     = math.random(1, math.max(1, math.floor(power * 1.5)))
-        local branches = math.random(1, math.max(1, math.floor(power * 2) + 1))
-        giveItem(actor, "hw_log",    logs)
-        giveItem(actor, "hw_branch", branches)
-
-        G:set(readyKey, now + cfg.respawn)
-        G:set(hpKey,    cfg.base_hp)
-
-        sendMsg(actor,
-            "The tree falls! You get " .. logs .. " log(s) and "
-            .. branches .. " branch(es). (Axe skill: " .. math.floor(axeSkill) .. ")")
-    else
-        G:set(hpKey, hp)
-        sendMsg(actor,
-            "You chop the tree. (" .. hp .. " HP left; Axe skill: "
-            .. math.floor(axeSkill) .. "; damage: " .. damage .. ")")
-    end
-end
-
--- ---------------------------------------------------------------------------
--- Mining
--- ---------------------------------------------------------------------------
-
-local function handleMineral(recordId, objectId, actor)
-    local cfg = MINERAL_CFG[recordId]
-    if not cfg then return end
-
-    local depKey = "depleted_" .. objectId
-    if G:get(depKey) then
-        sendMsg(actor, "This deposit is depleted. Use the Mine Management Board to refresh.")
-        return
-    end
-
-    local wpnId = getEquippedWeaponId(actor)
-    if not wpnId or not PICKAXE_IDS[wpnId] then
-        sendMsg(actor, "You need a pickaxe equipped to mine this.")
-        return
-    end
-
-    local bluntSkill = getSkill(actor, "bluntweapon")
-    local power      = WEAPON_POWER[wpnId] or 1.0
-    local chance     = math.min(0.92, 0.25 + (bluntSkill / 100) * 0.65 + (power - 1) * 0.1)
-
-    trainSkill(actor, "bluntweapon", 0.08)
-
-    if math.random() < chance then
-        local amount  = math.max(1, math.floor(1 + power * 0.5 + bluntSkill * 0.02))
-        if bluntSkill >= 40 and math.random() < 0.25 then
-            amount = amount + 1
-        end
-
-        giveItem(actor, cfg.item, amount)
-        G:set(depKey, true)
-
-        local label = cfg.item:gsub("hw_", ""):gsub("_", " ")
-        sendMsg(actor,
-            "You mine " .. amount .. " " .. label .. ". "
-            .. "(Blunt skill: " .. math.floor(bluntSkill) .. ")")
-    else
-        sendMsg(actor,
-            "Your pick glances off the rock. Try again. "
-            .. "(Blunt skill: " .. math.floor(bluntSkill) .. ")")
-    end
+    sendMsg(actor, "You have successfully harvested " .. getPlantDisplayName(recordId) .. ".")
 end
 
 -- ---------------------------------------------------------------------------
@@ -476,58 +303,23 @@ local function handleGardenVendor(actor)
 end
 
 -- ---------------------------------------------------------------------------
--- Door teleportation
--- ---------------------------------------------------------------------------
-
-local function handleDoor(recordId, actor)
-    local dest = DOOR_DESTINATIONS[recordId]
-    if not dest then return end
-
-    if dest.require then
-        local inv = types.Actor.inventory(actor)
-        if inv:countOf(dest.require) == 0 then
-            sendMsg(actor, dest.locked_msg or "You need a pass to enter here.")
-            return
-        end
-    end
-
-    local cell = world.getCellByName(dest.cell)
-    if not cell then
-        sendMsg(actor, "Error: destination cell '" .. dest.cell .. "' not found.")
-        return
-    end
-
-    world.teleportActor(
-        actor, cell,
-        util.vector3(dest.x, dest.y, dest.z),
-        util.vector3(0, 0, 0))
-end
-
--- ---------------------------------------------------------------------------
 -- Main event dispatcher
 -- ---------------------------------------------------------------------------
 
 local function onHW_Activate(data)
     local rid   = data.recordId
-    local oid   = data.objectId
     local actor = data.actor
-    local obj   = data.object   -- world-object ref (may be nil for older saves)
+    local obj   = data.object
 
     local ok, err = pcall(function()
         if HARVEST_CFG[rid] then
             handlePlant(rid, actor, obj)
-        elseif TREE_CFG[rid] then
-            handleTree(rid, oid, actor)
-        elseif MINERAL_CFG[rid] then
-            handleMineral(rid, oid, actor)
         elseif rid == "hw_bed" then
             handleBed(actor)
         elseif rid == "hw_mine_refresh_station" then
             handleMineRefresh(actor)
         elseif rid == "hw_vending_machine_garden" then
             handleGardenVendor(actor)
-        elseif DOOR_DESTINATIONS[rid] then
-            handleDoor(rid, actor)
         end
     end)
 
@@ -593,11 +385,7 @@ local function onUpdate(dt)
 
     if G:get("mine_refresh_pending") then
         G:set("mine_refresh_pending", false)
-        for id in pairs(MINERAL_CFG) do
-            local gen = (G:get("mine_generation") or 0) + 1
-            G:set("mine_generation", gen)
-            break
-        end
+        G:set("mine_generation", (G:get("mine_generation") or 0) + 1)
     end
 end
 
